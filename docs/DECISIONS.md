@@ -56,7 +56,7 @@ Two languages with typed dictionaries (a missing Arabic key is a compile error, 
 placeholder parity). Arabic needs all six CLDR plural forms ("تعليقان", "5 تعليقات", "12 تعليقًا"). These
 are implemented and unit-tested rather than delegated to `Intl.PluralRules`, which Hermes does not provide
 on every target, so web and mobile print identical strings. Dates use the Gregorian calendar explicitly
-(`ar-SA` defaults to Hijri) with Western digits. Formatting is feature-detected, with a manual fallback that
+(`ar-SA` defaults to Hijri), with Arabic-Indic digits in Arabic as in the design. Formatting is feature-detected, with a manual fallback that
 a test proves produces identical output.
 
 ### D9 · Bidirectional content is per comment
@@ -118,15 +118,15 @@ emulator). In Arabic, `AppText` wraps Android text in an explicit RTL embedding 
 The full list is in [requirements §6](specs/01-requirements.md#6-assumptions-decisions-the-brief-or-design-leaves-open).
 In short:
 
-1. **Figma was read from its rendered preview.** The Figma API and Dev Mode MCP need edit access to the file. The layout,
-   hierarchy, components and colour intent were taken from the published thumbnail of all five frames. Exact
+1. **Figma was matched by measurement** (D13). The Figma API needs edit access to the file, so the exported frames,
+   the brand hex codes and the typeface were used, and the built pages were re-measured against the frames. Exact
    pixel values and tokens are approximations. With edit access, the next step would be to pull variables
    from Figma's Variables API and replace `tokens.ts`.
 2. Top-level threads are newest first, because the composer sits above the list. Replies are oldest first, so they read as a conversation.
 3. The current user is the dataset's `currentUser`. There is no authentication, as the brief says.
-4. Only top-level comments can be replied to, so nothing goes deeper than one level.
+4. One level of replies: replying to a reply joins the same thread, addressed to that reply's author.
 5. `source` and user names are not translated (the data has no Arabic versions). They are shown as is and bidi-isolated.
-6. Western digits in Arabic, the common convention in Saudi digital services. It is one constant (`NUMBERING_SYSTEM`).
+6. Arabic-Indic digits in Arabic, Western digits in English, as in the design. It is one map (`NUMBERING_SYSTEM`).
 7. Closing a reply composer (Cancel, Esc, Back) keeps its draft. Only a successful post clears text.
 8. Editing and deleting comments are out of scope. `updatedAt` is shown as "Edited".
 

@@ -17,7 +17,7 @@
 | --- | --- | --- |
 | **J-1** | View a published record and its discussion | Record title, summary, source and publish date are shown in the active language. The discussion shows a total comment count, top-level comments, and their replies nested one level deep. |
 | **J-2** | Add a new comment | A labelled multi-line composer posts a top-level comment as the current user (`currentUser` in the dataset). The new comment appears at the top of the discussion without a page reload, and the count updates. |
-| **J-3** | Reply to an existing comment | Every top-level comment offers **Reply**. The reply appears under its parent. One level only: replies cannot be replied to (brief: “one level of replies is sufficient”). |
+| **J-3** | Reply to an existing comment | Every comment offers **Reply**, as in the design. A reply always joins its top-level thread, so nesting stays one level deep (brief: “one level of replies is sufficient”). Replying to a reply addresses that reply's author (“Replying to Lina”). |
 | **J-4** | Navigate between records | A record list leads to each record. Record 002 has no comments, so the empty state (S-3) can be reached with the real data. |
 
 ## 3. State requirements
@@ -67,7 +67,7 @@
 2. **Ordering:** top-level threads are newest first, because the composer sits above the list in the design, so a
    new comment appears right under where it was written. Replies within a thread are oldest first, so they read as a conversation.
 3. **Current user** is `currentUser` from the dataset (Noura Alharbi). There is no authentication, as the brief says.
-4. **Reply depth:** only top-level comments can be replied to. Replies are not repliable, so no thread is deeper than one level.
+4. **Reply depth:** one level. Replying to a reply posts into the same thread (the repository rejects deeper parents), addressed to the reply's author.
 5. **Untranslated data:** `source` and user names exist only in English. They are shown as is and isolated with
    `<bdi>`/`lang` rather than machine-translated.
 6. **Digits:** Arabic-Indic digits in Arabic and Western digits in English, as in the design's Arabic frame
@@ -82,4 +82,4 @@
    so threads stay one level deep.
 10. **Time zone:** dates and times are shown in Saudi time (`Asia/Riyadh`, UTC+3). A date prerendered on a
    build server and a timestamp rendered on the viewer's device then always agree. Relative times
-   ("5 minutes ago") do not depend on the time zone.
+   ("5 min ago") do not depend on the time zone.

@@ -52,6 +52,6 @@ that would fail if the behaviour regressed.
 | D-1 data layer | `CommentingRepository` interface | `data.test.ts` |
 | D-2 session persistence | sessionStorage adapter (web), in-memory per process (mobile) | `persists session comments…`, `discards corrupt storage…`, E2E reload test |
 | D-3 simulation | `NetworkSimulator`, Reviewer tools | `NetworkSimulator` tests, `sanitizeSimulation` |
-| P-1 responsive | CSS breakpoints at 480/640/768 px, coarse-pointer targets | E2E runs on desktop 1280 px and Pixel 7 |
+| P-1 responsive | CSS breakpoints at 480/767/1279 px, 44px targets on touch | E2E runs on desktop 1280 px and Pixel 7 |
 | P-2 iOS conventions | Native stack, modal sheet, keyboard insets, haptics, pull to refresh | mobile journey tests; manual check on device |
 | P-3 parity | Shared `@commenting/core` behaviour | Same scenarios tested in both app suites |
