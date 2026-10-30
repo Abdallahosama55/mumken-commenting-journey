@@ -20,6 +20,8 @@ export function generateStaticParams() {
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await getServerI18n();
   return {
+    // Absolute base for canonical and hreflang URLs (search engines require absolute alternates).
+    metadataBase: new URL(process.env.SITE_URL ?? 'http://localhost:3000'),
     title: { default: `${t('records.title')} · ${t('app.name')}`, template: `%s · ${t('app.name')}` },
     description: t('records.subtitle'),
   };

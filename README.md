@@ -21,6 +21,20 @@ measured from the frames, and the result was re-measured against them: within 1 
 **Reviewer tools** (bottom corner on web, the sliders icon on the mobile records list) simulate a slow network,
 failed posts (once or always) and a failed discussion load, so every state can be reached on demand.
 
+## Videos
+
+The previews play inline (animated PNG). Click one to open the full-quality MP4.
+
+**Web journey** (48 s): records → record (loading → loaded) → comment → reply → failed post kept → Retry →
+load error → Try again → Arabic RTL → empty → unavailable.
+
+[![Web journey preview](docs/videos/web-journey-preview.png)](docs/videos/web-journey.mp4)
+
+**Mobile journey** (2 min, played at 2×; Expo Go on an Android emulator): records → discussion → comment →
+reply screen → failed post kept → Retry → Arabic RTL → empty.
+
+[![Mobile journey preview](docs/videos/mobile-journey-preview.png)](docs/videos/mobile-journey.mp4)
+
 ---
 
 ## Quick start
@@ -38,7 +52,8 @@ npm run dev:web
 npm run dev:mobile
 ```
 
-Production web build: `npm run build:web && npm run start:web`.
+Production web build: `npm run build:web && npm run start:web`. Set `SITE_URL` to the public origin when
+deploying, so canonical and `hreflang` links are absolute.
 
 ## Tests
 
@@ -54,6 +69,13 @@ npm run verify         # typecheck + lint + all unit/integration tests (what CI 
 The first `test:e2e` run needs a Chromium build: `npx playwright install chromium` (run in `apps/web`).
 Web screenshots can be regenerated with `npm run screenshots -w @commenting/web`.
 
+## Performance
+
+Lighthouse on the production build (record page): **94 / 100 / 100 / 100** on mobile (slow 4G, 4× CPU) and
+**100 / 100 / 100 / 100** on desktop (Performance / Accessibility / Best practices / SEO). CLS is 0 on both.
+First-load JavaScript is 219 KB gzipped, of which 47 KB is the app. Breakdown and the LCP trade-off:
+[DECISIONS D11](docs/DECISIONS.md#d11--performance-and-scalability).
+
 ## Repository layout
 
 ```
@@ -67,7 +89,7 @@ packages/core/        @commenting/core: everything both apps share
 apps/web/             Next.js 16 App Router (Cache Components), CSS Modules
 apps/mobile/          Expo SDK 58, Expo Router native stack
 docs/specs/           SDD: 01-requirements → 02-design → 03-tasks (with traceability matrix)
-docs/                 DECISIONS.md, TESTING.md, screenshots/
+docs/                 DECISIONS.md, TESTING.md, COMPLIANCE.md, screenshots/, videos/
 ```
 
 ## Documentation
@@ -79,13 +101,6 @@ docs/                 DECISIONS.md, TESTING.md, screenshots/
 * [Testing approach and results](docs/TESTING.md)
 * [Brief compliance checklist](docs/COMPLIANCE.md): every line of the brief mapped to its implementation and proof
 * [Screenshots](docs/screenshots/)
-
-## Videos
-
-* [Web journey (48 s)](docs/videos/web-journey.mp4): records → record (loading → loaded) → comment → reply → failed post kept →
-  Retry → load error → Try again → Arabic RTL → empty → unavailable.
-* [Mobile journey (2 min, played at 2×)](docs/videos/mobile-journey.mp4) (Expo Go, Android emulator): records → discussion → comment → reply screen →
-  failed post kept → Retry → Arabic RTL → empty.
 
 ## Screenshots
 

@@ -80,6 +80,21 @@ only, so the Arabic layout comes from `dir="rtl"` with no RTL stylesheet.
   posting a comment patches the cache instead of refetching.
 * **At real scale** the same seams take cursor pagination (`listComments({ cursor })` +
   `useInfiniteQuery`), server-side thread assembly, and live updates (SSE or WebSocket invalidating the query).
+* **Measured** (production build, record page, 30 Oct 2026):
+
+  | | Mobile (Lighthouse default: Moto G Power, slow 4G, 4× CPU) | Desktop |
+  | --- | --- | --- |
+  | Performance · Accessibility · Best practices · SEO | 94 · 100 · 100 · 100 | 100 · 100 · 100 · 100 |
+  | FCP · LCP · TBT · CLS | 0.9 s · 3.0 s · 30 ms · 0 | 0.2 s · 0.6 s · 0 ms · 0 |
+
+  First-load JavaScript is 219 KB gzipped: about 170 KB is React and Next.js, and 47 KB is the app. Of the
+  app's share, about 21 KB is the dataset plus the zod schema, because the simulated backend runs in the browser.
+  CSS is 4.1 KB and the HTML 4.9 KB (gzipped).
+
+  The mobile LCP element is the first comment. The discussion is fetched on the client, after the simulated
+  350–750 ms latency, so it can show its loading state. With a real API, the first page of comments would stream
+  into the prerendered shell (Partial Prerendering), and LCP would move to the record text, which renders with
+  the shell (0.9 s). Canonical and `hreflang` URLs are absolute: set `SITE_URL` to the public origin.
 
 ### D12 · Testing pyramid
 216 automated tests across four layers. See [TESTING.md](TESTING.md). The highest-value suites are the

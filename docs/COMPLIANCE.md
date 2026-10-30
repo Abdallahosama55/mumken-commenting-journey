@@ -58,7 +58,7 @@ Verification run on 30 Oct 2026, from a fresh `git clone` with Node 22.17 / npm 
 | Source code in a Git repository or ZIP | ✅ | This repository; commits in the candidate's name |
 | Instructions for installing and running both apps | ✅ | README › Quick start (checked from a fresh clone) |
 | Instructions for running the tests | ✅ | README › Tests, TESTING.md |
-| Screenshots or a short recording, web and mobile | ✅ | `docs/screenshots/` (21 images), `docs/videos/web-journey.mp4`, `docs/videos/mobile-journey.mp4` |
+| Screenshots or a short recording, web and mobile | ✅ | `docs/screenshots/` (21 images), `docs/videos/web-journey.mp4`, `docs/videos/mobile-journey.mp4` (animated previews in the README) |
 | Short explanation of the main technical decisions | ✅ | DECISIONS §1 (D1–D14) |
 | Assumptions, limitations and potential improvements | ✅ | DECISIONS §2–§4, requirements §6 |
 
@@ -72,7 +72,7 @@ Verification run on 30 Oct 2026, from a fresh `git clone` with Node 22.17 / npm 
 | Accessibility and multilingual support | axe (jsdom + real browser, WCAG 2.2 AA rules), focus management, live regions/VoiceOver announcements, Arabic plurals, Arabic-Indic digits, bidi per comment |
 | Reliability and handling of states | Loading / empty / unavailable / load error / submit error / submitting; idempotent retry; corrupt-storage tolerance; abortable requests |
 | Testing approach | TESTING.md; traceability matrix in `specs/03-tasks.md` |
-| Performance and scalability | DECISIONS D11: prerendering, one client island, `content-visibility`, virtualised list, memoised rows, shared clock, cache write-through |
+| Performance and scalability | DECISIONS D11: prerendering, one client island, `content-visibility`, virtualised list, memoised rows, shared clock, cache write-through. Lighthouse 94/100/100/100 mobile, 100×4 desktop, CLS 0 |
 | Documentation and clarity | README, SDD specs, DECISIONS, TESTING, this file |
 | Overall technical judgment | DECISIONS: pessimistic submission vs optimistic (D4), RTL without restart (D7), i18n without a library (D8), design measurement (D13) |
 
@@ -86,4 +86,5 @@ Verification run on 30 Oct 2026, from a fresh `git clone` with Node 22.17 / npm 
 | `expo-doctor` | ✅ 20 / 20 |
 | Web visual check vs Figma frame (measured) | ✅ ≤ 1 pt on measured features |
 | Mobile run in Expo Go on Android emulator | ✅ (videos and screenshots) |
+| Lighthouse, production build (mobile · desktop) | ✅ 94/100/100/100 · 100/100/100/100 |
 | Mobile on iOS | ⚠️ not run (no Xcode) |
