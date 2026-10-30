@@ -82,7 +82,7 @@ only, so the Arabic layout comes from `dir="rtl"` with no RTL stylesheet.
   `useInfiniteQuery`), server-side thread assembly, and live updates (SSE or WebSocket invalidating the query).
 
 ### D12 · Testing pyramid
-213 automated tests across four layers. See [TESTING.md](TESTING.md). The highest-value suites are the
+216 automated tests across four layers. See [TESTING.md](TESTING.md). The highest-value suites are the
 composer state machine (core) and the two journey suites, which exercise the real data layer rather than mocks.
 
 ### D13 · Design fidelity: measured, not eyeballed
@@ -150,9 +150,11 @@ In short:
     before calling it fixed or a non-issue.
 * **Persistence is per session by design:** sessionStorage per tab on web, memory per process on mobile.
   Two tabs do not see each other's comments.
-* **Unknown record URLs return HTTP 200 with the "unavailable" UI.** With Partial Prerendering the static
-  shell has already streamed when `notFound()` runs. Next.js adds `noindex`, but the status code cannot change. A
-  real backend would know valid ids before streaming.
+* **Unknown record URLs return HTTP 200 with the "unavailable" UI.** With Partial Prefetching, Next.js serves the
+  static shell for an unlisted path immediately, so the status has gone out before `notFound()` runs. Awaiting
+  `params` outside `<Suspense>` was tried and does not change that. A real 404 would mean turning Partial Prefetching off for the whole app,
+  which costs instant navigation everywhere. Next.js marks the page `noindex`. A real backend would also let the
+  proxy reject unknown ids before rendering.
 * **The mobile language choice is not persisted** across app launches. It starts from the device language.
   Adding AsyncStorage is a few lines but adds a dependency that was not needed for the brief.
 * **No real-time updates or pagination.** The dataset is tiny, and §D11 describes the seams.

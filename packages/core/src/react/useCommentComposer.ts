@@ -1,4 +1,5 @@
-import { useCallback, useRef, useState, useSyncExternalStore } from 'react';
+import { useIsMutating } from '@tanstack/react-query';
+import { useCallback, useState, useSyncExternalStore } from 'react';
 import { draftKey } from '../data/draft-store';
 import { RepositoryError, isRepositoryError } from '../data/errors';
 import { detectLanguage } from '../domain/language';
@@ -11,7 +12,7 @@ import {
   type ValidationIssue,
 } from '../domain/validation';
 import { useCommenting, useI18n } from './providers';
-import { useCreateComment } from './queries';
+import { commentingKeys, useCreateComment } from './queries';
 
 export type ComposerStatus = 'idle' | 'submitting' | 'failed';
 
@@ -65,12 +66,11 @@ export function useCommentComposer({ recordId, parentId = null, onPosted }: Comm
   // The server has no drafts; the client re-renders with its stored draft right after hydration.
   const value = useSyncExternalStore(subscribe, getSnapshot, emptySnapshot);
 
-  const mutation = useCreateComment(recordId);
+  const mutation = useCreateComment(recordId, parentId);
   const { mutateAsync, reset } = mutation;
+  // A submit started by an earlier instance of this composer (closed and reopened) still counts as in flight.
+  const pendingForDraft = useIsMutating({ mutationKey: commentingKeys.createComment(recordId, parentId) }) > 0;
   const [validationIssue, setValidationIssue] = useState<ValidationIssue | null>(null);
-  const attemptRef = useRef<{ clientId: string; body: string } | null>(null);
-  // `isPending` only flips on the next render; the ref blocks a double tap within the same frame.
-  const inFlightRef = useRef(false);
 
   const setValue = useCallback(
     (next: string) => {
@@ -82,7 +82,9 @@ export function useCommentComposer({ recordId, parentId = null, onPosted }: Comm
   );
 
   const submit = useCallback(async (): Promise<SubmitOutcome> => {
-    if (inFlightRef.current) return { status: 'ignored' };
+    // Checked and set synchronously, so a double tap within one frame cannot send twice (S-6).
+    const previous = drafts.getAttempt(key);
+    if (previous?.inFlight) return { status: 'ignored' };
 
     const result = validateCommentBody(drafts.get(key));
     if (!result.ok) {
@@ -93,34 +95,32 @@ export function useCommentComposer({ recordId, parentId = null, onPosted }: Comm
 
     // Same text → same key, so a retry after an ambiguous failure cannot create a duplicate.
     // Edited text is a new comment and gets a new key.
-    if (attemptRef.current?.body !== result.value) {
-      attemptRef.current = { clientId: createClientId(), body: result.value };
-    }
+    const clientId = previous && previous.body === result.value ? previous.clientId : createClientId();
+    drafts.setAttempt(key, { clientId, body: result.value, inFlight: true });
 
-    inFlightRef.current = true;
     try {
       const comment = await mutateAsync({
         recordId,
         parentId,
         body: result.value,
         language: detectLanguage(result.value, locale),
-        clientId: attemptRef.current.clientId,
+        clientId,
       });
-      attemptRef.current = null;
-      drafts.clear(key);
+      drafts.setAttempt(key, undefined);
+      // Clear only the text that was posted: if the field now holds something new, it stays (S-5a).
+      if (drafts.get(key).trim() === result.value) drafts.clear(key);
       reset();
       onPosted?.(comment);
       return { status: 'posted', comment };
     } catch (error) {
+      drafts.setAttempt(key, { clientId, body: result.value, inFlight: false });
       return { status: 'failed', error: toRepositoryError(error) };
-    } finally {
-      inFlightRef.current = false;
     }
   }, [drafts, key, locale, mutateAsync, onPosted, parentId, recordId, reset]);
 
   const discard = useCallback(() => {
     drafts.clear(key);
-    attemptRef.current = null;
+    if (!drafts.getAttempt(key)?.inFlight) drafts.setAttempt(key, undefined);
     setValidationIssue(null);
     reset();
   }, [drafts, key, reset]);
@@ -131,7 +131,7 @@ export function useCommentComposer({ recordId, parentId = null, onPosted }: Comm
   return {
     value,
     setValue,
-    status: mutation.isPending ? 'submitting' : mutation.isError ? 'failed' : 'idle',
+    status: mutation.isPending || pendingForDraft ? 'submitting' : mutation.isError ? 'failed' : 'idle',
     validationIssue: validationIssue ?? (remaining < 0 ? 'too_long' : null),
     submitError: mutation.isError ? toRepositoryError(mutation.error) : null,
     length,

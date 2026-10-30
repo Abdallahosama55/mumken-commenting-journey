@@ -34,15 +34,18 @@ export interface NetworkSimulator {
 }
 
 export interface NetworkSimulatorOptions {
+  /** What Reset returns to (default `DEFAULT_SIMULATION`). */
+  readonly defaults?: Partial<SimulationSettings>;
+  /** The starting state, e.g. settings restored from storage (default: `defaults`). */
   readonly initial?: Partial<SimulationSettings>;
   /** Injected for deterministic tests. */
   readonly random?: () => number;
 }
 
 export function createNetworkSimulator(options: NetworkSimulatorOptions = {}): NetworkSimulator {
-  const initial: SimulationSettings = { ...DEFAULT_SIMULATION, ...options.initial };
+  const defaults: SimulationSettings = { ...DEFAULT_SIMULATION, ...options.defaults };
   const random = options.random ?? Math.random;
-  let settings = initial;
+  let settings: SimulationSettings = { ...defaults, ...options.initial };
   const listeners = new Set<() => void>();
 
   const setSettings = (next: SimulationSettings) => {
@@ -66,7 +69,7 @@ export function createNetworkSimulator(options: NetworkSimulatorOptions = {}): N
   return {
     getSettings: () => settings,
     update: (patch) => setSettings({ ...settings, ...patch }),
-    reset: () => setSettings(initial),
+    reset: () => setSettings(defaults),
     subscribe(listener) {
       listeners.add(listener);
       return () => listeners.delete(listener);
@@ -97,8 +100,9 @@ function delay(ms: number, signal?: AbortSignal): Promise<void> {
   });
 }
 
-const LATENCY_PROFILES: readonly LatencyProfile[] = ['instant', 'normal', 'slow'];
-const FAILURE_MODES: readonly SubmissionFailureMode[] = ['off', 'once', 'always'];
+/** The options the Reviewer tools offer, shared by both apps and the sanitizer. */
+export const LATENCY_PROFILES: readonly LatencyProfile[] = ['instant', 'normal', 'slow'];
+export const SUBMISSION_FAILURE_MODES: readonly SubmissionFailureMode[] = ['off', 'once', 'always'];
 
 /** Keeps only well-formed settings from untrusted input (e.g. values read back from storage). */
 export function sanitizeSimulation(input: unknown): Partial<SimulationSettings> {
@@ -108,7 +112,7 @@ export function sanitizeSimulation(input: unknown): Partial<SimulationSettings> 
   if (LATENCY_PROFILES.includes(candidate.latency as LatencyProfile)) {
     settings.latency = candidate.latency as LatencyProfile;
   }
-  if (FAILURE_MODES.includes(candidate.failSubmissions as SubmissionFailureMode)) {
+  if (SUBMISSION_FAILURE_MODES.includes(candidate.failSubmissions as SubmissionFailureMode)) {
     settings.failSubmissions = candidate.failSubmissions as SubmissionFailureMode;
   }
   if (typeof candidate.failDiscussionLoad === 'boolean') settings.failDiscussionLoad = candidate.failDiscussionLoad;

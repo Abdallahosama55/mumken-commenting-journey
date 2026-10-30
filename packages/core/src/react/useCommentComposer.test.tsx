@@ -165,6 +165,64 @@ describe('useCommentComposer', () => {
     expect(thread?.replies.at(-1)).toMatchObject({ body: 'أتفق مع هذا', language: 'ar' });
   });
 
+  it('a composer reopened mid-flight sees the pending submit and cannot duplicate it (S-5d, S-6)', async () => {
+    const services = createTestServices();
+    let release: () => void = () => {};
+    const original = services.repository.createComment;
+    const createSpy = vi
+      .spyOn(services.repository, 'createComment')
+      .mockImplementationOnce((input) => new Promise((resolve) => (release = () => resolve(original(input)))));
+    const wrapper = ({ children }: { children: ReactNode }) => <TestProviders services={services}>{children}</TestProviders>;
+    const options = { recordId: 'record-001', parentId: 'comment-001' };
+
+    const first = renderHook(() => useCommentComposer(options), { wrapper });
+    act(() => first.result.current.setValue('Sent once'));
+    let pending: Promise<unknown> = Promise.resolve();
+    act(() => {
+      pending = first.result.current.submit();
+    });
+    await waitFor(() => expect(createSpy).toHaveBeenCalled());
+    first.unmount(); // e.g. Cancel / swipe back while the request is in flight
+
+    const second = renderHook(() => useCommentComposer(options), { wrapper });
+    expect(second.result.current.value).toBe('Sent once');
+    await waitFor(() => expect(second.result.current.status).toBe('submitting'));
+    let outcome;
+    await act(async () => {
+      outcome = await second.result.current.submit();
+    });
+    expect(outcome).toEqual({ status: 'ignored' });
+
+    await act(async () => {
+      release();
+      await pending;
+    });
+    expect(createSpy).toHaveBeenCalledTimes(1);
+    expect(second.result.current.value).toBe('');
+  });
+
+  it('keeps text typed after a submit when that submit lands (S-5a)', async () => {
+    const services = createTestServices();
+    let release: () => void = () => {};
+    const original = services.repository.createComment;
+    const createSpy = vi
+      .spyOn(services.repository, 'createComment')
+      .mockImplementationOnce((input) => new Promise((resolve) => (release = () => resolve(original(input)))));
+    const { result } = setup({}, services);
+    act(() => result.current.composer.setValue('First'));
+    let pending: Promise<unknown> = Promise.resolve();
+    act(() => {
+      pending = result.current.composer.submit();
+    });
+    await waitFor(() => expect(createSpy).toHaveBeenCalled());
+    act(() => services.drafts.set('record-001:root', 'Something new'));
+    await act(async () => {
+      release();
+      await pending;
+    });
+    expect(result.current.composer.value).toBe('Something new');
+  });
+
   it('discard drops the draft and the error', async () => {
     const { result } = setup({}, createTestServices({ simulation: { failSubmissions: 'always' } }));
     act(() => result.current.composer.setValue('to be discarded'));

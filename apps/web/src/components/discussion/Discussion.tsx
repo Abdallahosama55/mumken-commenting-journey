@@ -12,7 +12,7 @@ import { Thread } from './Thread';
 
 interface OpenReply {
   readonly threadId: string;
-  readonly to: string;
+  readonly target: Comment;
 }
 
 /**
@@ -72,10 +72,10 @@ export function Discussion({ recordId }: { recordId: string }) {
               <Thread
                 recordId={recordId}
                 thread={thread}
-                replyingTo={openReply?.threadId === thread.comment.id ? openReply.to : null}
+                replyTarget={openReply?.threadId === thread.comment.id ? openReply.target : null}
                 freshId={freshId}
                 focusId={focusId}
-                onOpenReply={(threadId, to) => setOpenReply({ threadId, to })}
+                onOpenReply={(threadId, target) => setOpenReply({ threadId, target })}
                 onCloseReply={() => setOpenReply(null)}
                 onReplyPosted={handleReplyPosted}
               />

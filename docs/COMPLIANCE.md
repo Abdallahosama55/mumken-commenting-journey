@@ -39,7 +39,7 @@ Verification run on 30 Oct 2026, from a fresh `git clone` with Node 22.17 / npm 
 | Use the supplied JSON dataset | ✅ | `packages/core/src/data/commenting-assignment-data.json`, copied unchanged, validated at load |
 | Data layer in any reasonable way | ✅ | `CommentingRepository` interface + in-memory implementation + network simulator |
 | Submitted comments persist for the current session | ✅ | Web: sessionStorage per tab (survives reload). Mobile: memory per app process |
-| Automated tests for the most important behaviours | ✅ | 213 tests (core 171, web 19, mobile 11, E2E 12), see TESTING.md |
+| Automated tests for the most important behaviours | ✅ | 216 tests (core 174, web 19, mobile 11, E2E 12), see TESTING.md |
 
 ## 3. Design reference
 
@@ -81,7 +81,7 @@ Verification run on 30 Oct 2026, from a fresh `git clone` with Node 22.17 / npm 
 | Check | Result |
 | --- | --- |
 | `git clone` → `npm ci` (npm 10.9.2) | ✅ 12 s |
-| `npm run verify` (typecheck + lint + unit/integration, all workspaces) | ✅ 201 tests |
+| `npm run verify` (typecheck + lint + unit/integration, all workspaces) | ✅ 204 tests |
 | `npm run test:e2e` (production build, desktop + phone, axe in browser) | ✅ 12 / 12 |
 | `expo-doctor` | ✅ 20 / 20 |
 | Web visual check vs Figma frame (measured) | ✅ ≤ 1 pt on measured features |

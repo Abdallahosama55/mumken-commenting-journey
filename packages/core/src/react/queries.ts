@@ -9,6 +9,8 @@ export const commentingKeys = {
   records: () => [...commentingKeys.all, 'records'] as const,
   record: (recordId: string) => [...commentingKeys.all, 'record', recordId] as const,
   comments: (recordId: string) => [...commentingKeys.all, 'comments', recordId] as const,
+  createComment: (recordId: string, parentId: string | null) =>
+    [...commentingKeys.comments(recordId), 'create', parentId ?? 'root'] as const,
 };
 
 /**
@@ -57,16 +59,19 @@ export function useDiscussion(recordId: string) {
   });
 }
 
-export function useCreateComment(recordId: string) {
+export function useCreateComment(recordId: string, parentId: string | null = null) {
   const { repository } = useCommenting();
   const queryClient = useQueryClient();
   return useMutation({
-    mutationKey: [...commentingKeys.comments(recordId), 'create'],
+    mutationKey: commentingKeys.createComment(recordId, parentId),
     mutationFn: (input: NewComment) => repository.createComment(input),
-    onSuccess: (comment) => {
+    onSuccess: async (comment) => {
+      const queryKey = commentingKeys.comments(recordId);
+      // A list request that started before this write could land after it and drop the new comment.
+      await queryClient.cancelQueries({ queryKey });
       // Write-through instead of refetching: no flicker, no extra request. If the list has not been
       // loaded yet there is nothing to patch — the next load includes the new comment anyway.
-      queryClient.setQueryData<readonly Comment[]>(commentingKeys.comments(recordId), (current) =>
+      queryClient.setQueryData<readonly Comment[]>(queryKey, (current) =>
         current ? upsertComment(current, comment) : current,
       );
     },

@@ -10,6 +10,7 @@ export {
   type ValidationResult,
 } from './domain/validation';
 export { detectLanguage, directionOf } from './domain/language';
+export { avatarLetter, firstName } from './domain/people';
 
 export { RepositoryError, isNotFound, isRepositoryError, type RepositoryErrorCode } from './data/errors';
 export type { CommentingRepository, RequestOptions } from './data/repository';
@@ -22,6 +23,8 @@ export {
 } from './data/in-memory-repository';
 export {
   DEFAULT_SIMULATION,
+  LATENCY_PROFILES,
+  SUBMISSION_FAILURE_MODES,
   createNetworkSimulator,
   sanitizeSimulation,
   type LatencyProfile,
@@ -29,7 +32,7 @@ export {
   type SimulationSettings,
   type SubmissionFailureMode,
 } from './data/network-simulator';
-export { createDraftStore, draftKey, type DraftStore } from './data/draft-store';
+export { createDraftStore, draftKey, type DraftAttempt, type DraftStore } from './data/draft-store';
 export { STORAGE_PREFIX, createMemoryStorage, safeStorage, type KeyValueStorage } from './data/storage';
 
 export * from './i18n';

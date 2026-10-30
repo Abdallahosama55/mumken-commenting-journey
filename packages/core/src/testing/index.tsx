@@ -21,7 +21,7 @@ export function createTestServices(
   options: { simulation?: Partial<SimulationSettings> } & Omit<InMemoryRepositoryOptions, 'network'> = {},
 ): TestServices {
   const { simulation, ...repositoryOptions } = options;
-  const network = createNetworkSimulator({ initial: { latency: 'instant', ...simulation } });
+  const network = createNetworkSimulator({ defaults: { latency: 'instant' }, initial: simulation });
   const repository = createInMemoryRepository({
     now: () => new Date('2026-10-30T12:00:00Z'),
     ...repositoryOptions,

@@ -24,6 +24,7 @@ export const en = {
   'records.title': 'Published records',
   'records.subtitle': 'Read the latest updates and join the discussion.',
   'records.open': 'Open discussion',
+  'records.empty': 'No published records yet.',
 
   'record.published': 'Published',
   'record.publishedOn': 'Published {date}',

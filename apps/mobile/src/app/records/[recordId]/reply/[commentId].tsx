@@ -1,5 +1,6 @@
+import { firstName } from '@commenting/core';
 import { useDiscussion, useI18n } from '@commenting/core/react';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useRef } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -11,8 +12,6 @@ import { Skeleton } from '@/components/Skeleton';
 import { StatePanel } from '@/components/StatePanel';
 import { useFreshComment } from '@/lib/fresh-comment';
 import { colors, common, layout, radius } from '@/lib/theme';
-
-const firstName = (name: string) => name.trim().split(/\s+/)[0] ?? name;
 
 /**
  * Reply screen (design frame 03, J-3): the comment being answered, then "Replying to …", the field and Post reply,
@@ -27,6 +26,7 @@ export default function ReplyScreen() {
   const discussion = useDiscussion(recordId);
   const [, setFreshId] = useFreshComment();
   const composerRef = useRef<ComposerHandle>(null);
+  const navigation = useNavigation();
   const thread = discussion.data?.threads.find((candidate) => candidate.comment.id === commentId);
   const answered = thread?.replies.find((reply) => reply.id === target) ?? thread?.comment;
 
@@ -81,7 +81,8 @@ export default function ReplyScreen() {
           autoFocus
           onPosted={(reply) => {
             setFreshId(reply.id);
-            router.back();
+            // The request can land after the user already swiped back; only pop if this screen is on top.
+            if (navigation.isFocused()) router.back();
           }}
         />
       </View>

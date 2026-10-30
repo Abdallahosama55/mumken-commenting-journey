@@ -1,12 +1,9 @@
 'use client';
 
-import type { LatencyProfile, SubmissionFailureMode } from '@commenting/core';
+import { LATENCY_PROFILES, SUBMISSION_FAILURE_MODES } from '@commenting/core';
 import { useI18n, useSimulation } from '@commenting/core/react';
 import { SlidersIcon } from './icons';
 import styles from './ReviewerTools.module.css';
-
-const LATENCIES: readonly LatencyProfile[] = ['instant', 'normal', 'slow'];
-const FAILURE_MODES: readonly SubmissionFailureMode[] = ['off', 'once', 'always'];
 
 /**
  * Network simulation for reviewers (D-3): makes the loading, failure and retry states reachable on demand.
@@ -30,7 +27,7 @@ export function ReviewerTools() {
         <fieldset className={styles.group}>
           <legend>{t('devtools.latency')}</legend>
           <div className={styles.options}>
-            {LATENCIES.map((latency) => (
+            {LATENCY_PROFILES.map((latency) => (
               <label key={latency} className={styles.option}>
                 <input
                   type="radio"
@@ -47,7 +44,7 @@ export function ReviewerTools() {
         <fieldset className={styles.group}>
           <legend>{t('devtools.failSubmissions')}</legend>
           <div className={styles.options}>
-            {FAILURE_MODES.map((mode) => (
+            {SUBMISSION_FAILURE_MODES.map((mode) => (
               <label key={mode} className={styles.option}>
                 <input
                   type="radio"

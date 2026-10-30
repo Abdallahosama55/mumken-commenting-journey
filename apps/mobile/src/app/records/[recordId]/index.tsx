@@ -44,6 +44,7 @@ export default function DiscussionScreen() {
     setRefreshing(false);
   };
 
+  // Data beats errors: a failed background refetch keeps what is already on screen (as on the web).
   if (record.isPending) {
     return (
       <View style={[common.screen, styles.padded]}>
@@ -52,7 +53,7 @@ export default function DiscussionScreen() {
     );
   }
 
-  if (record.isError) {
+  if (!record.data) {
     return (
       <View style={[common.screen, styles.padded]}>
         {isNotFound(record.error) ? (
@@ -92,7 +93,13 @@ export default function DiscussionScreen() {
     </View>
   );
 
-  const empty = isError ? (
+  const empty = data ? (
+    <StatePanel
+      title={t('state.empty.title')}
+      body={t('state.empty.body')}
+      action={<Button label={t('state.empty.action')} onPress={() => composerRef.current?.focus()} />}
+    />
+  ) : isError ? (
     <StatePanel
       tone="danger"
       title={t('state.loadError.title')}
@@ -105,12 +112,6 @@ export default function DiscussionScreen() {
           onPress={() => void discussion.refetch()}
         />
       }
-    />
-  ) : data ? (
-    <StatePanel
-      title={t('state.empty.title')}
-      body={t('state.empty.body')}
-      action={<Button label={t('state.empty.action')} onPress={() => composerRef.current?.focus()} />}
     />
   ) : (
     <Skeleton title={t('state.loadingTitle')} label={t('state.loading')} />

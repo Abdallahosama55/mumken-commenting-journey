@@ -1,6 +1,6 @@
 'use client';
 
-import { directionOf, type Comment } from '@commenting/core';
+import { avatarLetter, directionOf, type Comment } from '@commenting/core';
 import { useCommenting, useI18n, useNow } from '@commenting/core/react';
 import { useEffect, useRef, type ReactNode } from 'react';
 import styles from './Discussion.module.css';
@@ -14,9 +14,6 @@ interface CommentItemProps {
   readonly focusOnMount?: boolean;
   readonly children?: ReactNode;
 }
-
-/** The avatar shows the first letter of the name, as in the design ("O", "ع"). */
-export const avatarLetter = (name: string) => (Array.from(name.trim())[0] ?? '?').toLocaleUpperCase();
 
 export function CommentItem({ comment, nested = false, fresh = false, focusOnMount = false, children }: CommentItemProps) {
   const { t } = useI18n();

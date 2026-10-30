@@ -17,12 +17,12 @@
 
 | Suite | Runner | Tests | Covers |
 | --- | --- | --- | --- |
-| `packages/core` | Vitest | 171 | Thread building (ordering, flattening, orphans, cycles), validation (code points), language detection, dataset schema, repository (not found, idempotency, one-level replies, server validation, storage restore and corruption), network simulator (fail once/always, abort, latency with fake timers), drafts, Arabic plural rules (13 cases), dictionary parity (keys, placeholders, plural shape, no untranslated Arabic), Gregorian dates and engine parity, relative time, locale negotiation, token contrast, and the composer state machine (post, fail, retry with the same key, new key after an edit, double submit, validation, counter, replies, discard) |
+| `packages/core` | Vitest | 174 | Thread building (ordering, flattening, orphans, cycles), validation (code points), language detection, dataset schema, repository (not found, idempotency, one-level replies, server validation, storage restore and corruption), network simulator (fail once/always, abort, latency with fake timers), drafts, Arabic plural rules (13 cases), dictionary parity (keys, placeholders, plural shape, no untranslated Arabic), Gregorian dates and engine parity, relative time, locale negotiation, token contrast, and the composer state machine (post, fail, retry with the same key, new key after an edit, double submit, validation, counter, replies, discard) |
 | `apps/web` | Vitest + Testing Library + axe | 19 | The discussion journey: loading → threads, post + announce, failure → text kept → Retry (no duplicate), edit after failure, empty validation + focus, Ctrl+Enter, inline reply focus management (open, Esc, reopen draft, post → focus new reply), empty state, load failure + recovery, per-comment `lang`/`dir`, full Arabic, axe in four states; proxy locale negotiation and path switching |
 | `apps/web/e2e` | Playwright (desktop 1280 px + Pixel 7) | 12 | Arabic browser → `/ar` → record; post + reply + reload persistence; failed post recovery; language switch keeps the draft and direction; empty / unavailable / load failure; in-browser axe (WCAG 2.0/2.1/2.2 A + AA) on four pages |
 | `apps/mobile` | jest-expo + React Native Testing Library (`renderRouter`) | 11 | The real Expo Router stack: list → record, post + VoiceOver announcement, failure → Retry, validation, reply screen round trip with the draft kept, empty, unavailable, load failure + recovery, Arabic RTL with per-comment `writingDirection`/alignment/`accessibilityLanguage`, live language switch from settings keeping the draft |
 
-**Total: 213 automated tests.**
+**Total: 216 automated tests.**
 
 ## Running
 

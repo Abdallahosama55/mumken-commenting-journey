@@ -1,4 +1,4 @@
-import { LOCALES, type LatencyProfile, type Locale, type SubmissionFailureMode } from '@commenting/core';
+import { LATENCY_PROFILES, LOCALES, SUBMISSION_FAILURE_MODES, type Locale } from '@commenting/core';
 import { useI18n, useSimulation } from '@commenting/core/react';
 import { Pressable, ScrollView, StyleSheet, Switch, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -8,8 +8,6 @@ import { useLocaleState } from '@/lib/locale';
 import { colors, common, layout, radius, touchTarget } from '@/lib/theme';
 
 const LANGUAGE_NAMES: Record<Locale, string> = { en: 'English', ar: 'العربية' };
-const LATENCIES: readonly LatencyProfile[] = ['instant', 'normal', 'slow'];
-const FAILURE_MODES: readonly SubmissionFailureMode[] = ['off', 'once', 'always'];
 
 /** Language (I-1, applied instantly) and the Reviewer tools (D-3), presented as an iOS modal sheet. */
 export default function SettingsScreen() {
@@ -42,14 +40,14 @@ export default function SettingsScreen() {
 
           <AppText variant="name">{t('devtools.latency')}</AppText>
           <Segmented
-            options={LATENCIES.map((value) => ({ value, label: t(`devtools.latency.${value}`) }))}
+            options={LATENCY_PROFILES.map((value) => ({ value, label: t(`devtools.latency.${value}`) }))}
             value={simulation.settings.latency}
             onChange={(latency) => simulation.update({ latency })}
           />
 
           <AppText variant="name">{t('devtools.failSubmissions')}</AppText>
           <Segmented
-            options={FAILURE_MODES.map((value) => ({ value, label: t(`devtools.failSubmissions.${value}`) }))}
+            options={SUBMISSION_FAILURE_MODES.map((value) => ({ value, label: t(`devtools.failSubmissions.${value}`) }))}
             value={simulation.settings.failSubmissions}
             onChange={(failSubmissions) => simulation.update({ failSubmissions })}
           />

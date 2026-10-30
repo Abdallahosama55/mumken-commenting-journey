@@ -1,23 +1,21 @@
 'use client';
 
-import type { Comment, CommentThread } from '@commenting/core';
+import { firstName, type Comment, type CommentThread } from '@commenting/core';
 import { useI18n } from '@commenting/core/react';
 import { useId, useRef } from 'react';
 import { CommentComposer } from './CommentComposer';
 import { CommentItem } from './CommentItem';
 import styles from './Discussion.module.css';
 
-const firstName = (name: string) => name.trim().split(/\s+/)[0] ?? name;
-
 interface ThreadProps {
   readonly recordId: string;
   readonly thread: CommentThread;
-  /** Name shown in "Replying to …" while this thread's composer is open, otherwise `null`. */
-  readonly replyingTo: string | null;
+  /** The comment being answered while this thread's composer is open, otherwise `null`. */
+  readonly replyTarget: Comment | null;
   readonly freshId: string | null;
   /** The reply to focus after posting (A-3). */
   readonly focusId: string | null;
-  readonly onOpenReply: (threadId: string, to: string) => void;
+  readonly onOpenReply: (threadId: string, target: Comment) => void;
   readonly onCloseReply: () => void;
   readonly onReplyPosted: (reply: Comment) => void;
 }
@@ -29,7 +27,7 @@ interface ThreadProps {
 export function Thread({
   recordId,
   thread,
-  replyingTo,
+  replyTarget,
   freshId,
   focusId,
   onOpenReply,
@@ -40,7 +38,7 @@ export function Thread({
   const openerRef = useRef<HTMLButtonElement | null>(null);
   const composerId = useId();
   const { comment, replies } = thread;
-  const replyOpen = replyingTo !== null;
+  const replyOpen = replyTarget !== null;
 
   // Cancel / Esc returns focus to the Reply button that opened the composer (A-3).
   const closeReply = () => {
@@ -48,16 +46,17 @@ export function Thread({
     onCloseReply();
   };
 
+  // Only the button that opened the composer reports it as expanded.
   const replyButton = (target: Comment) => (
     <button
       type="button"
       className="button-link"
-      aria-expanded={replyOpen}
-      aria-controls={replyOpen ? composerId : undefined}
+      aria-expanded={replyTarget?.id === target.id}
+      aria-controls={replyTarget?.id === target.id ? composerId : undefined}
       aria-label={t('comment.replyTo', { name: target.author.name })}
       onClick={(event) => {
         openerRef.current = event.currentTarget;
-        onOpenReply(comment.id, firstName(target.author.name));
+        onOpenReply(comment.id, target);
       }}
     >
       {t('comment.reply')}
@@ -88,7 +87,7 @@ export function Thread({
             id={composerId}
             recordId={recordId}
             parentId={comment.id}
-            replyTo={replyingTo}
+            replyTo={firstName(replyTarget.author.name)}
             autoFocus
             onCancel={closeReply}
             onPosted={onReplyPosted}

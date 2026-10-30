@@ -22,6 +22,7 @@ export const ar: Messages = {
   'records.title': 'السجلات المنشورة',
   'records.subtitle': 'اطّلع على أحدث المستجدات وشارك في النقاش.',
   'records.open': 'فتح النقاش',
+  'records.empty': 'لا توجد سجلات منشورة بعد.',
 
   'record.published': 'منشور',
   'record.publishedOn': 'نُشر في {date}',

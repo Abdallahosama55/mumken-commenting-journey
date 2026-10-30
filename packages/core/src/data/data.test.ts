@@ -154,8 +154,9 @@ describe('NetworkSimulator (D-3)', () => {
     await expect(slow).resolves.toBe('value');
   });
 
-  it('notifies subscribers and resets to the initial settings', () => {
-    const network = createNetworkSimulator({ initial: { latency: 'instant' } });
+  it('notifies subscribers and resets to the defaults, not to restored settings', () => {
+    const network = createNetworkSimulator({ defaults: { latency: 'instant' }, initial: { failSubmissions: 'always' } });
+    expect(network.getSettings().failSubmissions).toBe('always');
     const listener = vi.fn();
     const unsubscribe = network.subscribe(listener);
     network.update({ failDiscussionLoad: true });

@@ -47,7 +47,9 @@ export default function RecordsScreen() {
         </View>
       }
       ListEmptyComponent={
-        records.isError ? (
+        records.data ? (
+          <StatePanel title={t('records.empty')} />
+        ) : records.isError ? (
           <StatePanel
             tone="danger"
             title={t('state.generic.title')}

@@ -1,4 +1,4 @@
-import type { Comment } from '@commenting/core';
+import { avatarLetter, type Comment } from '@commenting/core';
 import { useCommenting, useI18n, useNow } from '@commenting/core/react';
 import { memo, type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -11,9 +11,6 @@ interface CommentCardProps {
   readonly fresh?: boolean;
   readonly children?: ReactNode;
 }
-
-/** The avatar shows the first letter of the name, as in the design ("O", "ع"). */
-const avatarLetter = (name: string) => (Array.from(name.trim())[0] ?? '?').toLocaleUpperCase();
 
 /**
  * One comment, per the Expo frames: 36pt avatar · 10pt · name/time; body 16pt below; actions 10pt below.
