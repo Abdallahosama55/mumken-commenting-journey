@@ -80,6 +80,8 @@ export const en = {
   'state.unavailable.action': 'Back to records',
   'state.pageNotFound.title': 'Page not found',
   'state.pageNotFound.body': 'The page you are looking for doesn’t exist or has moved.',
+  'state.commentUnavailable.title': 'Comment unavailable',
+  'state.commentUnavailable.body': 'This comment may have been removed.',
   'state.recordError.title': 'Couldn’t load this record',
   'state.generic.title': 'Something went wrong',
   'state.generic.body': 'An unexpected error occurred. Please try again.',
@@ -104,4 +106,5 @@ export const en = {
   'devtools.reset': 'Reset',
 
   'settings.language': 'Language',
+  'settings.done': 'Done',
 } as const;

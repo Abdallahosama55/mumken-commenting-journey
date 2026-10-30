@@ -102,6 +102,8 @@ export const ar: Messages = {
   'state.unavailable.action': 'العودة إلى السجلات',
   'state.pageNotFound.title': 'الصفحة غير موجودة',
   'state.pageNotFound.body': 'الصفحة التي تبحث عنها غير موجودة أو تم نقلها.',
+  'state.commentUnavailable.title': 'التعليق غير متاح',
+  'state.commentUnavailable.body': 'ربما أُزيل هذا التعليق.',
   'state.recordError.title': 'تعذّر تحميل هذا السجل',
   'state.generic.title': 'حدث خطأ ما',
   'state.generic.body': 'حدث خطأ غير متوقع. يُرجى المحاولة مرة أخرى.',
@@ -144,4 +146,5 @@ export const ar: Messages = {
   'devtools.reset': 'إعادة الضبط',
 
   'settings.language': 'اللغة',
+  'settings.done': 'تم',
 };
