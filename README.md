@@ -1,5 +1,7 @@
 # Cross-Platform Commenting Journey
 
+[![CI](https://github.com/Abdallahosama55/mumken-commenting-journey/actions/workflows/ci.yml/badge.svg)](https://github.com/Abdallahosama55/mumken-commenting-journey/actions/workflows/ci.yml)
+
 A commenting journey for published records on the **web** (Next.js 16, React 19, TypeScript) and on
 **mobile** (Expo SDK 58, React Native 0.88, TypeScript, iOS-first). Both apps are in English and Arabic,
 with full LTR/RTL support. Behaviour lives in one shared package, so both platforms behave the same while

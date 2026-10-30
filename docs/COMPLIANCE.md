@@ -80,7 +80,9 @@ Verification run on 30 Oct 2026, from a fresh `git clone` with Node 22.17 / npm 
 
 | Check | Result |
 | --- | --- |
-| `git clone` → `npm ci` (npm 10.9.2) | ✅ 12 s |
+| `git clone` of the public repository → `npm install` (npm 10.9.2) | ✅ 10 s |
+| Every README command (`dev:web`, `build:web` + `start:web`, `dev:mobile` serving the iOS bundle) | ✅ |
+| GitHub Actions CI (verify + E2E) on `main` | ✅ |
 | `npm run verify` (typecheck + lint + unit/integration, all workspaces) | ✅ 204 tests |
 | `npm run test:e2e` (production build, desktop + phone, axe in browser) | ✅ 12 / 12 |
 | `expo-doctor` | ✅ 20 / 20 |
