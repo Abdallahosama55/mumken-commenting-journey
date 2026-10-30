@@ -1,0 +1,109 @@
+{
+  "currentUser": {
+    "id": "user-001",
+    "name": "Noura Alharbi",
+    "initials": "NA"
+  },
+  "records": [
+    {
+      "id": "record-001",
+      "title": {
+        "en": "Expanding digital services for small businesses",
+        "ar": "توسيع الخدمات الرقمية للمنشآت الصغيرة"
+      },
+      "summary": {
+        "en": "A new initiative will help small businesses adopt digital tools, improve their online presence and access supporting services.",
+        "ar": "تهدف مبادرة جديدة إلى مساعدة المنشآت الصغيرة على تبني الأدوات الرقمية وتحسين حضورها الإلكتروني والوصول إلى الخدمات الداعمة."
+      },
+      "source": "Business Update",
+      "publishedAt": "2026-10-24T08:30:00Z"
+    },
+    {
+      "id": "record-002",
+      "title": {
+        "en": "Public consultation on urban mobility",
+        "ar": "استطلاع عام حول التنقل الحضري"
+      },
+      "summary": {
+        "en": "Residents are invited to share feedback on proposed improvements to public transport and pedestrian routes.",
+        "ar": "تتم دعوة السكان لمشاركة آرائهم حول التحسينات المقترحة للنقل العام ومسارات المشاة."
+      },
+      "source": "Community Bulletin",
+      "publishedAt": "2026-10-25T12:00:00Z"
+    }
+  ],
+  "users": [
+    {
+      "id": "user-001",
+      "name": "Noura Alharbi",
+      "initials": "NA"
+    },
+    {
+      "id": "user-002",
+      "name": "Omar Saleh",
+      "initials": "OS"
+    },
+    {
+      "id": "user-003",
+      "name": "Lina Haddad",
+      "initials": "LH"
+    },
+    {
+      "id": "user-004",
+      "name": "Fahad Alqahtani",
+      "initials": "FA"
+    }
+  ],
+  "comments": [
+    {
+      "id": "comment-001",
+      "recordId": "record-001",
+      "parentId": null,
+      "authorId": "user-002",
+      "body": "This could make a meaningful difference if the onboarding process stays simple for smaller teams.",
+      "language": "en",
+      "createdAt": "2026-10-24T09:15:00Z",
+      "updatedAt": null
+    },
+    {
+      "id": "comment-002",
+      "recordId": "record-001",
+      "parentId": "comment-001",
+      "authorId": "user-003",
+      "body": "Agreed. Clear guidance and accessible support will be just as important as the tools themselves.",
+      "language": "en",
+      "createdAt": "2026-10-24T09:42:00Z",
+      "updatedAt": null
+    },
+    {
+      "id": "comment-003",
+      "recordId": "record-001",
+      "parentId": null,
+      "authorId": "user-004",
+      "body": "من المهم أن تشمل المبادرة المنشآت خارج المدن الرئيسية وأن تكون المواد الإرشادية متاحة باللغة العربية.",
+      "language": "ar",
+      "createdAt": "2026-10-24T10:05:00Z",
+      "updatedAt": null
+    },
+    {
+      "id": "comment-004",
+      "recordId": "record-001",
+      "parentId": "comment-003",
+      "authorId": "user-001",
+      "body": "أتفق، كما أن توفير قنوات دعم متعددة سيساعد المنشآت التي تختلف احتياجاتها وخبراتها التقنية.",
+      "language": "ar",
+      "createdAt": "2026-10-24T10:28:00Z",
+      "updatedAt": null
+    },
+    {
+      "id": "comment-005",
+      "recordId": "record-001",
+      "parentId": null,
+      "authorId": "user-003",
+      "body": "It would be useful to publish measurable outcomes after the first phase, including adoption and retention rather than registrations alone.",
+      "language": "en",
+      "createdAt": "2026-10-24T11:10:00Z",
+      "updatedAt": "2026-10-24T11:18:00Z"
+    }
+  ]
+}
