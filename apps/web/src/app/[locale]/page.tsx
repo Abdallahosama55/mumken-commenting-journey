@@ -1,15 +1,15 @@
-import { getBundledDataset } from '@commenting/core';
+import type { Metadata } from 'next';
 import Link from 'next/link';
+import { listRecords } from '@/lib/server-data';
 import { getServerI18n } from '@/lib/server-i18n';
 import styles from './records.module.css';
 
+export const metadata: Metadata = { alternates: { languages: { en: '/en', ar: '/ar' } } };
+
 /** Record list (J-4) — static, prerendered per locale. */
 export default async function RecordsPage() {
-  const i18n = await getServerI18n();
+  const [i18n, records] = await Promise.all([getServerI18n(), listRecords()]);
   const { t, locale } = i18n;
-  const records = [...getBundledDataset().records].sort(
-    (a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt),
-  );
 
   return (
     <div className="page">

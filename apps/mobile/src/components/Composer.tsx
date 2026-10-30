@@ -49,7 +49,8 @@ export function Composer({ recordId, parentId = null, replyTo = '', autoFocus = 
   const submit = async () => {
     const outcome = await composer.submit();
     if (outcome.status === 'failed') {
-      notify('error', `${isReply ? t('submitError.replyTitle') : t('submitError.title')}. ${t('submitError.body')}`);
+      const title = isReply ? t('submitError.replyTitle') : t('submitError.title');
+      notify('error', `${title}. ${outcome.error.retryable ? t('submitError.body') : t('submitError.rejected')}`);
     } else if (outcome.status === 'invalid') {
       inputRef.current?.focus();
     }

@@ -27,7 +27,6 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: { default: `${t('records.title')} · ${t('app.name')}`, template: `%s · ${t('app.name')}` },
     description: t('records.subtitle'),
-    alternates: { languages: { en: '/en', ar: '/ar' } },
   };
 }
 

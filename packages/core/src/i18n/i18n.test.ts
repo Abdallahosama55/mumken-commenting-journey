@@ -94,6 +94,14 @@ describe('formatting (I-4)', () => {
     }
   });
 
+  it('shows dates in Saudi time on every engine, so server and client agree', () => {
+    const lateEvening = '2026-10-24T22:30:00Z'; // 01:30 on 25 October in Riyadh
+    for (const options of [{}, { forceFallback: true }]) {
+      expect(createFormatters('en', options).formatDate(lateEvening)).toBe('25 October 2026');
+      expect(createFormatters('en', options).formatDateTime(lateEvening)).toBe('25 October 2026, 01:30');
+    }
+  });
+
   it('formats date-time with a locale-appropriate separator', () => {
     expect(createI18n('en').formatDateTime(iso)).toMatch(/^24 October 2026, \d{2}:\d{2}$/);
     expect(createI18n('ar').formatDateTime(iso)).toMatch(/^24 أكتوبر 2026، \d{2}:\d{2}$/);

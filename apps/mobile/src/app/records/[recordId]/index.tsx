@@ -37,7 +37,7 @@ export default function DiscussionScreen() {
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await Promise.all([discussion.refetch(), record.isError ? record.refetch() : null]);
+    await discussion.refetch();
     setRefreshing(false);
   };
 
@@ -119,7 +119,8 @@ export default function DiscussionScreen() {
 
   const renderItem = ({ item }: { item: CommentThread }) => (
     <View style={styles.row}>
-      <ThreadItem thread={item} freshId={freshId} onReply={openReply} />
+      {/* Only the row holding the fresh comment gets its id, so other memoised rows skip re-rendering. */}
+      <ThreadItem thread={item} freshId={containsComment(item, freshId) ? freshId : null} onReply={openReply} />
     </View>
   );
 
@@ -143,6 +144,9 @@ export default function DiscussionScreen() {
     />
   );
 }
+
+const containsComment = (thread: CommentThread, id: string | null) =>
+  id !== null && (thread.comment.id === id || thread.replies.some((reply) => reply.id === id));
 
 const styles = StyleSheet.create({
   padded: { padding: space.lg },

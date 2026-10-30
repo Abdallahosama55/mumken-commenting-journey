@@ -149,6 +149,30 @@ describe('<Discussion> (web)', () => {
     expect(screen.queryByRole('textbox', { name: 'Replying to Omar Saleh' })).not.toBeInTheDocument();
   });
 
+  it('a reply that lands after its composer was closed does not close another open composer (A-3)', async () => {
+    const { user, services } = renderDiscussion();
+    await threadList();
+    // Hold the first reply in flight until we release it.
+    let release: () => void = () => {};
+    const original = services.repository.createComment;
+    vi.spyOn(services.repository, 'createComment').mockImplementationOnce(
+      (input) => new Promise((resolve) => (release = () => resolve(original(input)))),
+    );
+
+    await user.click(screen.getByRole('button', { name: 'Reply to Omar Saleh' }));
+    await user.keyboard('Slow reply');
+    await user.click(screen.getByRole('button', { name: 'Post reply' }));
+    await user.click(screen.getByRole('button', { name: 'Cancel' }));
+    await user.click(screen.getByRole('button', { name: 'Reply to Lina Haddad' }));
+    const otherField = screen.getByRole('textbox', { name: 'Replying to Lina Haddad' });
+    await user.keyboard('Still typing');
+
+    release();
+    expect(await screen.findByText('Slow reply')).toBeInTheDocument();
+    expect(otherField).toBeInTheDocument();
+    expect(otherField).toHaveFocus();
+  });
+
   it('shows the empty state and its action focuses the composer (S-3)', async () => {
     const { user } = renderDiscussion({ recordId: 'record-002' });
     expect(await screen.findByRole('heading', { name: 'No comments yet' })).toBeInTheDocument();

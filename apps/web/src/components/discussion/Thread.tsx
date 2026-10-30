@@ -13,13 +13,24 @@ interface ThreadProps {
   readonly thread: CommentThread;
   readonly replyOpen: boolean;
   readonly freshId: string | null;
+  /** The reply to focus after posting (A-3). */
+  readonly focusId: string | null;
   readonly onOpenReply: (commentId: string) => void;
   readonly onCloseReply: () => void;
   readonly onReplyPosted: (reply: Comment) => void;
 }
 
 /** A top-level comment, its replies (one level, J-3), and an inline reply composer when open. */
-export function Thread({ recordId, thread, replyOpen, freshId, onOpenReply, onCloseReply, onReplyPosted }: ThreadProps) {
+export function Thread({
+  recordId,
+  thread,
+  replyOpen,
+  freshId,
+  focusId,
+  onOpenReply,
+  onCloseReply,
+  onReplyPosted,
+}: ThreadProps) {
   const { t } = useI18n();
   const replyButtonRef = useRef<HTMLButtonElement>(null);
   const composerId = useId();
@@ -54,7 +65,7 @@ export function Thread({ recordId, thread, replyOpen, freshId, onOpenReply, onCl
             <ol aria-label={t('comment.replies', { count: replies.length })}>
               {replies.map((reply) => (
                 <li key={reply.id}>
-                  <CommentItem comment={reply} nested fresh={freshId === reply.id} focusOnMount={freshId === reply.id} />
+                  <CommentItem comment={reply} nested fresh={freshId === reply.id} focusOnMount={focusId === reply.id} />
                 </li>
               ))}
             </ol>

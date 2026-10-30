@@ -113,6 +113,12 @@ describe('detectLanguage (I-3)', () => {
     expect(detectLanguage('«Hello» مرحبا', 'ar')).toBe('en');
   });
 
+  it('does not treat × or ÷ as Latin letters, nor Hebrew as Arabic', () => {
+    expect(detectLanguage('× ٣ مرات', 'en')).toBe('ar');
+    expect(detectLanguage('÷ 2 Agreed', 'ar')).toBe('en');
+    expect(detectLanguage('שלום', 'en')).toBe('en');
+  });
+
   it('falls back to the UI locale when there is no strong character', () => {
     expect(detectLanguage('👍 123 !!', 'ar')).toBe('ar');
     expect(detectLanguage('👍', 'en')).toBe('en');

@@ -72,3 +72,6 @@
    constant to change (`NUMBERING_SYSTEM` in `packages/core/src/i18n/format.ts`).
 7. **Language detection** for new comments uses the first strong directional character, the same rule as HTML `dir="auto"`.
 8. **Edit and delete** of comments are out of scope (not in the brief). `updatedAt` is shown as “Edited”.
+9. **Time zone:** dates and times are shown in Saudi time (`Asia/Riyadh`, UTC+3). A date prerendered on a
+   build server and a timestamp rendered on the viewer's device then always agree. Relative times
+   ("5 minutes ago") do not depend on the time zone.

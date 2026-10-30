@@ -75,7 +75,8 @@ export function useCommentComposer({ recordId, parentId = null, onPosted }: Comm
   const setValue = useCallback(
     (next: string) => {
       drafts.set(key, next);
-      setValidationIssue((issue) => (issue === 'empty' && next.trim() ? null : issue));
+      // A message from the last submit disappears as soon as the text becomes valid (S-7).
+      setValidationIssue((issue) => (issue && validateCommentBody(next).ok ? null : issue));
     },
     [drafts, key],
   );

@@ -1,3 +1,5 @@
+import { isLocale } from '@commenting/core/i18n';
+
 export const LOCALE_COOKIE = 'locale';
 
 /** Remembers an explicit language choice so the next visit to `/` lands in that language. */
@@ -8,6 +10,6 @@ export function rememberLocale(locale: string) {
 /** `/en/records/record-001` → `/ar/records/record-001`; keeps the user on the same page (I-1). */
 export function switchLocalePath(pathname: string, target: string): string {
   const [, first = '', ...rest] = pathname.split('/');
-  const tail = first === 'en' || first === 'ar' ? rest : [first, ...rest].filter(Boolean);
+  const tail = isLocale(first) ? rest : [first, ...rest].filter(Boolean);
   return ['', target, ...tail].join('/');
 }

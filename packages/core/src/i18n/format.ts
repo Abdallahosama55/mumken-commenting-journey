@@ -3,6 +3,13 @@ import type { Locale } from '../domain/types';
 /** Western digits in both languages — assumption 6 in the requirements. Change here to use Arabic-Indic. */
 export const NUMBERING_SYSTEM = 'latn';
 
+/**
+ * Dates are shown in Saudi time (assumption 9), so a date prerendered on a build server and a timestamp
+ * rendered on a phone always agree, wherever either runs. Riyadh has no DST, so the fallback is a fixed offset.
+ */
+export const DISPLAY_TIME_ZONE = 'Asia/Riyadh';
+const DISPLAY_OFFSET_MS = 3 * 60 * 60 * 1000;
+
 const INTL_LOCALE: Record<Locale, string> = { en: 'en-GB', ar: 'ar' };
 
 const MONTHS: Record<Locale, readonly string[]> = {
@@ -34,19 +41,19 @@ export function createFormatters(locale: Locale, options: FormatterOptions = {})
   const date = options.forceFallback ? undefined : tryDateFormat(locale);
   const number = options.forceFallback ? undefined : tryNumberFormat(locale);
 
-  const manualDate = (value: Date) => `${value.getDate()} ${MONTHS[locale][value.getMonth()]} ${value.getFullYear()}`;
-  const formatDate = (iso: string) => {
-    const value = new Date(iso);
-    return date ? date.format(value) : manualDate(value);
-  };
+  // The UTC fields of a shifted date are the wall-clock fields in the display time zone.
+  const inDisplayZone = (iso: string) => new Date(Date.parse(iso) + DISPLAY_OFFSET_MS);
+  const manualDate = (value: Date) =>
+    `${value.getUTCDate()} ${MONTHS[locale][value.getUTCMonth()]} ${value.getUTCFullYear()}`;
+  const formatDate = (iso: string) => (date ? date.format(new Date(iso)) : manualDate(inDisplayZone(iso)));
   const pad = (n: number) => String(n).padStart(2, '0');
   const separator = locale === 'ar' ? '، ' : ', ';
 
   return {
     formatDate,
     formatDateTime: (iso) => {
-      const value = new Date(iso);
-      return `${formatDate(iso)}${separator}${pad(value.getHours())}:${pad(value.getMinutes())}`;
+      const value = inDisplayZone(iso);
+      return `${formatDate(iso)}${separator}${pad(value.getUTCHours())}:${pad(value.getUTCMinutes())}`;
     },
     formatNumber: (value) => (number ? number.format(value) : String(value)),
   };
@@ -60,9 +67,14 @@ function tryDateFormat(locale: Locale): Intl.DateTimeFormat | undefined {
       year: 'numeric',
       calendar: 'gregory',
       numberingSystem: NUMBERING_SYSTEM,
+      timeZone: DISPLAY_TIME_ZONE,
     });
     const resolved = format.resolvedOptions();
-    return resolved.calendar === 'gregory' && resolved.numberingSystem === NUMBERING_SYSTEM ? format : undefined;
+    const honoured =
+      resolved.calendar === 'gregory' &&
+      resolved.numberingSystem === NUMBERING_SYSTEM &&
+      resolved.timeZone === DISPLAY_TIME_ZONE;
+    return honoured ? format : undefined;
   } catch {
     return undefined;
   }

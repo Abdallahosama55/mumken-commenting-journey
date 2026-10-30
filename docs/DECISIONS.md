@@ -82,7 +82,7 @@ only, so the Arabic layout comes from `dir="rtl"` with no RTL stylesheet.
   `useInfiniteQuery`), server-side thread assembly, and live updates (SSE or WebSocket invalidating the query).
 
 ### D12 · Testing pyramid
-200 automated tests across four layers. See [TESTING.md](TESTING.md). The highest-value suites are the
+204 automated tests across four layers. See [TESTING.md](TESTING.md). The highest-value suites are the
 composer state machine (core) and the two journey suites, which exercise the real data layer rather than mocks.
 
 ## 2. Assumptions

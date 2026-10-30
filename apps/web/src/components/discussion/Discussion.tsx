@@ -20,8 +20,16 @@ export function Discussion({ recordId }: { recordId: string }) {
   const announce = useAnnounce();
   const { data, isError, isFetching, refetch } = useDiscussion(recordId);
   const composerRef = useRef<HTMLTextAreaElement>(null);
-  const [openReplyId, setOpenReplyId] = useState<string | null>(null);
+  const [openReplyId, setOpenReplyIdState] = useState<string | null>(null);
+  // Mirrors `openReplyId` for callbacks that resolve later (a reply can land after its composer was closed).
+  const openReplyRef = useRef<string | null>(null);
   const [freshId, setFreshId] = useState<string | null>(null);
+  const [focusId, setFocusId] = useState<string | null>(null);
+
+  const setOpenReplyId = (commentId: string | null) => {
+    openReplyRef.current = commentId;
+    setOpenReplyIdState(commentId);
+  };
 
   const handleCommentPosted = (comment: Comment) => {
     setFreshId(comment.id);
@@ -29,9 +37,14 @@ export function Discussion({ recordId }: { recordId: string }) {
   };
 
   const handleReplyPosted = (reply: Comment) => {
-    setOpenReplyId(null);
     setFreshId(reply.id);
     announce(t('announce.replyPosted'));
+    // Only close and move focus if this reply's composer is still the open one — never steal focus from a
+    // composer the user opened while the request was in flight (A-3).
+    if (openReplyRef.current === reply.parentId) {
+      setOpenReplyId(null);
+      setFocusId(reply.id);
+    }
   };
 
   let content;
@@ -56,6 +69,7 @@ export function Discussion({ recordId }: { recordId: string }) {
                 thread={thread}
                 replyOpen={openReplyId === thread.comment.id}
                 freshId={freshId}
+                focusId={focusId}
                 onOpenReply={setOpenReplyId}
                 onCloseReply={() => setOpenReplyId(null)}
                 onReplyPosted={handleReplyPosted}

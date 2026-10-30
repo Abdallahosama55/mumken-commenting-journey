@@ -119,6 +119,17 @@ describe('useCommentComposer', () => {
     expect(result.current.composer.validationIssue).toBeNull();
   });
 
+  it('clears a "too long" message once the text is cut back under the limit (S-7)', async () => {
+    const { result } = setup();
+    act(() => result.current.composer.setValue('a'.repeat(1050)));
+    await act(async () => {
+      await result.current.composer.submit();
+    });
+    expect(result.current.composer.validationIssue).toBe('too_long');
+    act(() => result.current.composer.setValue('a'.repeat(950)));
+    expect(result.current.composer.validationIssue).toBeNull();
+  });
+
   it('shows the counter near the limit and flags text over it', () => {
     const { result } = setup();
     act(() => result.current.composer.setValue('a'.repeat(899)));
