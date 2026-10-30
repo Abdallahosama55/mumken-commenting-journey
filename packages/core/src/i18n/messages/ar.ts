@@ -100,6 +100,8 @@ export const ar: Messages = {
   'state.unavailable.title': 'السجل غير متاح',
   'state.unavailable.body': 'ربما أُزيل هذا السجل أو أن الرابط غير صحيح.',
   'state.unavailable.action': 'العودة إلى السجلات',
+  'state.pageNotFound.title': 'الصفحة غير موجودة',
+  'state.pageNotFound.body': 'الصفحة التي تبحث عنها غير موجودة أو تم نقلها.',
   'state.recordError.title': 'تعذّر تحميل هذا السجل',
   'state.generic.title': 'حدث خطأ ما',
   'state.generic.body': 'حدث خطأ غير متوقع. يُرجى المحاولة مرة أخرى.',

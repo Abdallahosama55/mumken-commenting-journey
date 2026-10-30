@@ -78,6 +78,8 @@ export const en = {
   'state.unavailable.title': 'Record unavailable',
   'state.unavailable.body': 'This record may have been removed, or the link may be incorrect.',
   'state.unavailable.action': 'Back to records',
+  'state.pageNotFound.title': 'Page not found',
+  'state.pageNotFound.body': 'The page you are looking for doesn’t exist or has moved.',
   'state.recordError.title': 'Couldn’t load this record',
   'state.generic.title': 'Something went wrong',
   'state.generic.body': 'An unexpected error occurred. Please try again.',

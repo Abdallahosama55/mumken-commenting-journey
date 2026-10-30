@@ -1,9 +1,13 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const nextConfig: NextConfig = {
-  /* config options here */
   cacheComponents: true,
   partialPrefetching: true,
+  reactCompiler: true,
+  typedRoutes: true,
+  poweredByHeader: false,
+  // The shared package ships TypeScript source; Next compiles it like app code.
+  transpilePackages: ['@commenting/core'],
 };
 
 export default nextConfig;

@@ -9,7 +9,8 @@
     "lint": "eslint",
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "screenshots": "SCREENSHOTS=1 playwright test screenshots"
   },
   "dependencies": {
     "@commenting/core": "*",

@@ -1,0 +1,62 @@
+import { LOCALES, colors, tokensToCss } from '@commenting/core';
+import type { Metadata, Viewport } from 'next';
+import { IBM_Plex_Sans_Arabic, Inter } from 'next/font/google';
+import { Providers } from '@/components/Providers';
+import { ReviewerTools } from '@/components/ReviewerTools';
+import { SiteHeader } from '@/components/SiteHeader';
+import { getServerI18n } from '@/lib/server-i18n';
+import '../globals.css';
+
+// Self-hosted at build time by next/font: no layout shift, no third-party request at runtime.
+const latin = Inter({ subsets: ['latin'], variable: '--font-latin', display: 'swap' });
+const arabic = IBM_Plex_Sans_Arabic({
+  subsets: ['arabic'],
+  weight: ['400', '500', '600', '700'],
+  variable: '--font-arabic',
+  display: 'swap',
+});
+
+const tokenStyles = tokensToCss();
+
+export function generateStaticParams() {
+  return LOCALES.map((locale) => ({ locale }));
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await getServerI18n();
+  return {
+    title: { default: `${t('records.title')} · ${t('app.name')}`, template: `%s · ${t('app.name')}` },
+    description: t('records.subtitle'),
+    alternates: { languages: { en: '/en', ar: '/ar' } },
+  };
+}
+
+export const viewport: Viewport = {
+  themeColor: colors.ink,
+  width: 'device-width',
+  initialScale: 1,
+};
+
+/** The `[locale]` segment is the root layout, so `<html lang dir>` is correct from the first byte (I-2). */
+export default async function RootLayout({ children }: LayoutProps<'/[locale]'>) {
+  const i18n = await getServerI18n();
+  return (
+    <html lang={i18n.locale} dir={i18n.dir} className={`${latin.variable} ${arabic.variable}`}>
+      <head>
+        <style>{tokenStyles}</style>
+      </head>
+      <body>
+        <a href="#main" className="skip-link">
+          {i18n.t('a11y.skipToContent')}
+        </a>
+        <Providers locale={i18n.locale}>
+          <SiteHeader i18n={i18n} />
+          <main id="main" tabIndex={-1}>
+            {children}
+          </main>
+          <ReviewerTools />
+        </Providers>
+      </body>
+    </html>
+  );
+}

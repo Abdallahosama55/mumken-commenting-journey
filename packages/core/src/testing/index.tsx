@@ -2,13 +2,14 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { createDraftStore, type DraftStore } from '../data/draft-store';
 import { createInMemoryRepository, type InMemoryRepository, type InMemoryRepositoryOptions } from '../data/in-memory-repository';
-import { createNetworkSimulator, type SimulationSettings } from '../data/network-simulator';
+import { createNetworkSimulator, type NetworkSimulator, type SimulationSettings } from '../data/network-simulator';
 import type { Locale } from '../domain/types';
 import { CommentingProvider, I18nProvider, type CommentingServices } from '../react/providers';
 
 export interface TestServices extends CommentingServices {
   readonly repository: InMemoryRepository;
   readonly drafts: DraftStore;
+  readonly network: NetworkSimulator;
   readonly queryClient: QueryClient;
 }
 

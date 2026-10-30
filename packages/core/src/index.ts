@@ -23,6 +23,7 @@ export {
 export {
   DEFAULT_SIMULATION,
   createNetworkSimulator,
+  sanitizeSimulation,
   type LatencyProfile,
   type NetworkSimulator,
   type SimulationSettings,

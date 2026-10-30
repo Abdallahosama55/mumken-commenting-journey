@@ -1,0 +1,198 @@
+.discussion {
+  display: grid;
+  gap: var(--space-lg);
+  margin-block-start: var(--space-lg);
+  padding: var(--space-xl);
+}
+
+@media (max-width: 480px) {
+  .discussion {
+    padding: var(--space-lg);
+  }
+}
+
+.header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+}
+
+.count {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+}
+
+/* Threads ---------------------------------------------------------------- */
+
+.threads {
+  display: grid;
+  border-block-start: 1px solid var(--color-border);
+}
+
+.thread {
+  display: grid;
+  gap: var(--space-md);
+  padding-block: var(--space-lg);
+  border-block-end: 1px solid var(--color-border);
+  /* Long discussions: the browser skips layout/paint for off-screen threads. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 160px;
+}
+
+.thread:last-child {
+  border-block-end: 0;
+  padding-block-end: 0;
+}
+
+.replies {
+  display: grid;
+  gap: var(--space-md);
+  margin-inline-start: calc(32px + var(--space-md));
+}
+
+.replies > ol {
+  display: grid;
+  gap: var(--space-sm);
+}
+
+@media (max-width: 480px) {
+  .replies {
+    margin-inline-start: var(--space-lg);
+  }
+}
+
+/* Comment ---------------------------------------------------------------- */
+
+.comment {
+  display: grid;
+  gap: var(--space-sm);
+  border-radius: var(--radius-md);
+  scroll-margin-block: 96px;
+}
+
+.comment[data-nested] {
+  padding: var(--space-md) var(--space-lg);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface-sunken);
+}
+
+.comment[data-fresh] {
+  animation: fresh 2.4s ease-out;
+}
+
+@keyframes fresh {
+  from {
+    box-shadow: 0 0 0 6px var(--color-accent-soft);
+    background-color: var(--color-accent-soft);
+  }
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.avatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: 50%;
+  background: var(--color-accent-soft);
+  color: var(--color-accent-ink);
+  font-size: var(--font-size-xs);
+  font-weight: 700;
+}
+
+.metaText {
+  display: grid;
+  min-inline-size: 0;
+  line-height: var(--line-height-tight);
+}
+
+.author {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+}
+
+.you {
+  padding: 0 6px;
+  border-radius: var(--radius-sm);
+  background: var(--color-canvas);
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+}
+
+.time {
+  margin-block-start: 2px;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.body {
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+  text-align: start;
+}
+
+.actions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+/* Skeleton --------------------------------------------------------------- */
+
+.skeleton {
+  display: grid;
+  gap: var(--space-xl);
+  padding-block: var(--space-lg);
+  border-block-start: 1px solid var(--color-border);
+}
+
+.skeletonItem {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.skeletonAvatar,
+.skeletonLines > span {
+  background: var(--color-skeleton);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.skeletonAvatar {
+  flex: none;
+  inline-size: 32px;
+  block-size: 32px;
+  border-radius: 50%;
+}
+
+.skeletonLines {
+  display: grid;
+  flex: 1;
+  gap: var(--space-sm);
+}
+
+.skeletonLines > span {
+  block-size: 12px;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.45;
+  }
+}

@@ -3,7 +3,7 @@ import type { NewComment } from '../domain/types';
 import { createDraftStore, draftKey } from './draft-store';
 import { RepositoryError } from './errors';
 import { SESSION_COMMENTS_KEY, createInMemoryRepository, getBundledDataset } from './in-memory-repository';
-import { createNetworkSimulator } from './network-simulator';
+import { createNetworkSimulator, sanitizeSimulation } from './network-simulator';
 import { createMemoryStorage, safeStorage } from './storage';
 
 const instant = () => createNetworkSimulator({ initial: { latency: 'instant' } });
@@ -224,5 +224,18 @@ describe('safeStorage', () => {
     fail = true;
     expect(storage.getItem('k')).toBeNull();
     expect(() => storage.setItem('k', 'v')).not.toThrow();
+  });
+});
+
+describe('sanitizeSimulation', () => {
+  it('keeps valid settings and drops anything malformed', () => {
+    expect(sanitizeSimulation({ latency: 'slow', failSubmissions: 'once', failDiscussionLoad: true })).toEqual({
+      latency: 'slow',
+      failSubmissions: 'once',
+      failDiscussionLoad: true,
+    });
+    expect(sanitizeSimulation({ latency: 'warp', failSubmissions: 1, failDiscussionLoad: 'yes', extra: 1 })).toEqual({});
+    expect(sanitizeSimulation(null)).toEqual({});
+    expect(sanitizeSimulation('slow')).toEqual({});
   });
 });

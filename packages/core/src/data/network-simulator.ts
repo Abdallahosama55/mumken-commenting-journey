@@ -96,3 +96,21 @@ function delay(ms: number, signal?: AbortSignal): Promise<void> {
     signal?.addEventListener('abort', onAbort, { once: true });
   });
 }
+
+const LATENCY_PROFILES: readonly LatencyProfile[] = ['instant', 'normal', 'slow'];
+const FAILURE_MODES: readonly SubmissionFailureMode[] = ['off', 'once', 'always'];
+
+/** Keeps only well-formed settings from untrusted input (e.g. values read back from storage). */
+export function sanitizeSimulation(input: unknown): Partial<SimulationSettings> {
+  if (typeof input !== 'object' || input === null) return {};
+  const candidate = input as Record<string, unknown>;
+  const settings: { -readonly [K in keyof SimulationSettings]?: SimulationSettings[K] } = {};
+  if (LATENCY_PROFILES.includes(candidate.latency as LatencyProfile)) {
+    settings.latency = candidate.latency as LatencyProfile;
+  }
+  if (FAILURE_MODES.includes(candidate.failSubmissions as SubmissionFailureMode)) {
+    settings.failSubmissions = candidate.failSubmissions as SubmissionFailureMode;
+  }
+  if (typeof candidate.failDiscussionLoad === 'boolean') settings.failDiscussionLoad = candidate.failDiscussionLoad;
+  return settings;
+}
