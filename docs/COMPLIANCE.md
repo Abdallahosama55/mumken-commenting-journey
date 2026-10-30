@@ -33,7 +33,7 @@ Verification run on 30 Oct 2026, from a fresh `git clone` with Node 22.17 / npm 
 | Mobile: React Native | ✅ | React Native 0.88 |
 | Mobile: Expo | ✅ | Expo SDK 58, Expo Router; `expo-doctor` 20/20 |
 | Mobile: TypeScript | ✅ | Strict TS; `npm run typecheck` |
-| Support for iOS mainly | ⚠️ | Built on iOS-first APIs: VoiceOver `accessibilityLanguage`, `automaticallyAdjustKeyboardInsets`, modal sheet, notification haptics, start/end alignment per `RCTResolveTextAlignment`. **Not run on an iPhone or the iOS Simulator** (no Xcode on the development machine). Verified with jest-expo and on an Android emulator. Steps to check on iOS are in the README |
+| Support for iOS mainly | ⚠️ | Built on iOS-first APIs: VoiceOver `accessibilityLanguage`, `automaticallyAdjustKeyboardInsets`, modal sheet, notification haptics, start/end alignment per `RCTResolveTextAlignment`. **Not run on an iPhone or the iOS Simulator** (no Xcode on the development machine). Verified with jest-expo and on an Android emulator. Steps to run it on an iPhone or the iOS Simulator: README › Quick start › Mobile |
 | Any supporting libraries | ✅ | TanStack Query, zod/mini, Expo modules; rationale in DECISIONS |
 | Code sharing allowed | ✅ | `packages/core` shares domain, data, i18n, tokens and hooks |
 | Use the supplied JSON dataset | ✅ | `packages/core/src/data/commenting-assignment-data.json`, copied unchanged, validated at load |
@@ -58,7 +58,7 @@ Verification run on 30 Oct 2026, from a fresh `git clone` with Node 22.17 / npm 
 | Source code in a Git repository or ZIP | ✅ | This repository; commits in the candidate's name |
 | Instructions for installing and running both apps | ✅ | README › Quick start (checked from a fresh clone) |
 | Instructions for running the tests | ✅ | README › Tests, TESTING.md |
-| Screenshots or a short recording, web and mobile | ✅ | `docs/screenshots/` (21 images), `docs/videos/web-journey.mp4`, `docs/videos/mobile-journey.mp4` (animated previews in the README) |
+| Screenshots or a short recording, web and mobile | ✅ | `docs/screenshots/` (21 images), `docs/videos/web-journey.mp4`, `docs/videos/mobile-journey.mp4` (animated previews and download links in the README) |
 | Short explanation of the main technical decisions | ✅ | DECISIONS §1 (D1–D14) |
 | Assumptions, limitations and potential improvements | ✅ | DECISIONS §2–§4, requirements §6 |
 

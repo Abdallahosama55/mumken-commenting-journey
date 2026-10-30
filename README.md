@@ -23,37 +23,68 @@ failed posts (once or always) and a failed discussion load, so every state can b
 
 ## Videos
 
-The previews play inline (animated PNG). Click one to open the full-quality MP4.
+The previews below play inline. Click a preview, or the download link under it, to get the full-quality MP4.
+Both files are also in [`docs/videos/`](docs/videos/).
 
 **Web journey** (48 s): records → record (loading → loaded) → comment → reply → failed post kept → Retry →
 load error → Try again → Arabic RTL → empty → unavailable.
 
-[![Web journey preview](docs/videos/web-journey-preview.png)](docs/videos/web-journey.mp4)
+[![Web journey preview](docs/videos/web-journey-preview.png)](https://github.com/Abdallahosama55/mumken-commenting-journey/raw/main/docs/videos/web-journey.mp4)
+
+⬇️ **[Download web-journey.mp4](https://github.com/Abdallahosama55/mumken-commenting-journey/raw/main/docs/videos/web-journey.mp4)** (1280×800, 48 s, 5.2 MB)
 
 **Mobile journey** (2 min, played at 2×; Expo Go on an Android emulator): records → discussion → comment →
 reply screen → failed post kept → Retry → Arabic RTL → empty.
 
-[![Mobile journey preview](docs/videos/mobile-journey-preview.png)](docs/videos/mobile-journey.mp4)
+[![Mobile journey preview](docs/videos/mobile-journey-preview.png)](https://github.com/Abdallahosama55/mumken-commenting-journey/raw/main/docs/videos/mobile-journey.mp4)
+
+⬇️ **[Download mobile-journey.mp4](https://github.com/Abdallahosama55/mumken-commenting-journey/raw/main/docs/videos/mobile-journey.mp4)** (576×1280, 1 min 59 s, 5.5 MB)
 
 ---
 
 ## Quick start
 
-Requirements: **Node 20.19+** (22 recommended, see `.nvmrc`) and **npm 10+**. Mobile also needs Expo Go
-58 on an iPhone, or an iOS Simulator (Xcode) / Android emulator.
+Requirements: **Node 20.19+** (22 recommended, see `.nvmrc`) and **npm 10+**. For mobile: **Expo Go** (SDK 58) on an
+iPhone, or the iOS Simulator (macOS with Xcode), or an Android emulator.
 
 ```bash
-npm install                 # one install for the whole workspace
-
-# Web — http://localhost:3000 (redirects to /en or /ar from your browser language)
-npm run dev:web
-
-# Mobile — scan the QR code with the iPhone camera (Expo Go), or press i (iOS Simulator) / a (Android)
-npm run dev:mobile
+git clone https://github.com/Abdallahosama55/mumken-commenting-journey.git
+cd mumken-commenting-journey
+npm install                 # one install for the whole workspace (web, mobile and the shared core)
 ```
 
-Production web build: `npm run build:web && npm run start:web`. Set `SITE_URL` to the public origin when
-deploying, so canonical and `hreflang` links are absolute.
+### Web
+
+```bash
+npm run dev:web             # http://localhost:3000 (redirects to /en or /ar from your browser language)
+```
+
+Production build: `npm run build:web && npm run start:web` (also on port 3000). Set `SITE_URL` to the public
+origin when deploying, so canonical and `hreflang` links are absolute.
+
+### Mobile (iOS first)
+
+```bash
+npm run dev:mobile          # starts the Expo dev server and prints a QR code
+```
+
+* **iPhone:** install Expo Go from the App Store and scan the QR code with the Camera app. The phone and the
+  computer must be on the same network. If they cannot be, run `npm run dev:mobile -- --tunnel`.
+* **iOS Simulator** (macOS with Xcode): press `i` in the dev server, or run `npm run ios -w @commenting/mobile`.
+  Expo installs Expo Go in the simulator.
+* **Android emulator:** press `a`.
+
+No native build, Apple account or environment variables are needed.
+
+### What to try
+
+| | Web | Mobile |
+| --- | --- | --- |
+| Discussion with comments and replies | `/en/records/record-001` | *Expanding digital services for small businesses* |
+| Empty state | `/en/records/record-002` | *Public consultation on urban mobility* |
+| Unavailable record | `/en/records/record-999` (any unknown id) | Open `exp://<dev-server-address>/--/records/record-999` in Expo Go |
+| Slow network, failed post, failed load | **Reviewer tools** (bottom corner) | Sliders icon on the records list › **Reviewer tools** |
+| Arabic, right-to-left | **EN** in the header, or `/ar/…` | Sliders icon › **Language** |
 
 ## Tests
 
