@@ -77,7 +77,15 @@ docs/                 DECISIONS.md, TESTING.md, screenshots/
 * [Tasks and traceability](docs/specs/03-tasks.md): every requirement mapped to its code and tests
 * [Technical decisions, limitations and improvements](docs/DECISIONS.md)
 * [Testing approach and results](docs/TESTING.md)
+* [Brief compliance checklist](docs/COMPLIANCE.md): every line of the brief mapped to its implementation and proof
 * [Screenshots](docs/screenshots/)
+
+## Videos
+
+* [Web journey (48 s)](docs/videos/web-journey.mp4): records → record (loading → loaded) → comment → reply → failed post kept →
+  Retry → load error → Try again → Arabic RTL → empty → unavailable.
+* [Mobile journey (2 min, played at 2×)](docs/videos/mobile-journey.mp4) (Expo Go, Android emulator): records → discussion → comment → reply screen →
+  failed post kept → Retry → Arabic RTL → empty.
 
 ## Screenshots
 
