@@ -2,7 +2,7 @@ import type { Comment } from '@commenting/core';
 import { useCommenting, useI18n, useNow } from '@commenting/core/react';
 import { memo, type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { colors, fontWeight, radius, space } from '@/lib/theme';
+import { colors, radius } from '@/lib/theme';
 import { AppText } from './AppText';
 
 interface CommentCardProps {
@@ -12,26 +12,31 @@ interface CommentCardProps {
   readonly children?: ReactNode;
 }
 
-/** One comment. Memoised: list rows re-render only when their comment or highlight changes. */
+/** The avatar shows the first letter of the name, as in the design ("O", "ع"). */
+const avatarLetter = (name: string) => (Array.from(name.trim())[0] ?? '?').toLocaleUpperCase();
+
+/**
+ * One comment, per the Expo frames: 36pt avatar · 10pt · name/time; body 16pt below; actions 10pt below.
+ * Memoised: list rows re-render only when their comment or highlight changes.
+ */
 export const CommentCard = memo(function CommentCard({ comment, nested = false, fresh = false, children }: CommentCardProps) {
   const { t, formatDateTime } = useI18n();
   const { repository } = useCommenting();
   const isOwn = comment.author.id === repository.getCurrentUser().id;
 
   return (
-    <View style={[styles.card, nested && styles.nested, fresh && styles.fresh]} testID={`comment-${comment.id}`}>
+    <View style={[nested && styles.nested, fresh && styles.fresh]} testID={`comment-${comment.id}`}>
       {/* Name, time and body are read as one item by VoiceOver; actions stay separately focusable. */}
-      <View accessible style={styles.content}>
+      <View accessible>
         <View style={styles.meta}>
           <View style={styles.avatar} importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>
-            <AppText variant="meta" tone="accent" style={styles.initials}>
-              {comment.author.initials}
+            <AppText variant="avatar" style={styles.initial}>
+              {avatarLetter(comment.author.name)}
             </AppText>
           </View>
           <View style={styles.metaText}>
-            <AppText variant="label">
+            <AppText variant="name" accessibilityHint={isOwn ? t('comment.you') : undefined}>
               {comment.author.name}
-              {isOwn ? <AppText variant="meta" tone="muted">{`  ${t('comment.you')}`}</AppText> : null}
             </AppText>
             <RelativeTime iso={comment.createdAt} label={formatDateTime(comment.createdAt)} edited={comment.updatedAt !== null} />
           </View>
@@ -50,7 +55,7 @@ function RelativeTime({ iso, label, edited }: { iso: string; label: string; edit
   const now = useNow();
   const { t, formatRelativeTime } = useI18n();
   return (
-    <AppText variant="meta" tone="muted" accessibilityHint={label}>
+    <AppText variant="small" tone="muted" accessibilityHint={label}>
       {formatRelativeTime(iso, now)}
       {edited ? ` · ${t('comment.edited')}` : ''}
     </AppText>
@@ -58,26 +63,25 @@ function RelativeTime({ iso, label, edited }: { iso: string; label: string; edit
 }
 
 const styles = StyleSheet.create({
-  card: { gap: space.sm, borderRadius: radius.md },
   nested: {
-    padding: space.md,
-    borderWidth: StyleSheet.hairlineWidth,
+    padding: 14,
+    borderRadius: radius.md,
+    borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.surfaceSunken,
   },
-  fresh: { backgroundColor: colors.accentSoft },
-  content: { gap: space.sm },
-  meta: { flexDirection: 'row', alignItems: 'center', gap: space.md },
+  fresh: { backgroundColor: colors.accentSoft, borderRadius: radius.md },
+  meta: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   avatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: colors.accentSoft,
   },
-  initials: { fontWeight: fontWeight.bold, textAlign: 'center' },
+  initial: { color: colors.accentInk, textAlign: 'center' },
   metaText: { flex: 1 },
-  body: { lineHeight: 24 },
-  actions: { flexDirection: 'row', gap: space.sm },
+  body: { marginTop: 16 },
+  actions: { flexDirection: 'row', gap: 16, marginTop: 10 },
 });

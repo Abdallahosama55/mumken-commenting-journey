@@ -44,7 +44,7 @@ async function RecordView({ params }: Pick<Props, 'params'>) {
 
   return (
     <>
-      <Breadcrumbs i18n={i18n} current={record.title[i18n.locale]} />
+      <Breadcrumbs i18n={i18n} current={record.id} />
       <RecordArticle record={record} i18n={i18n} />
       <Discussion recordId={record.id} />
     </>

@@ -45,7 +45,7 @@ describe('dictionaries (I-1)', () => {
   });
 
   it('never leave an Arabic string untranslated (Latin-only)', () => {
-    const allowedLatin = new Set<MessageKey>(['language.switchTo']);
+    const allowedLatin = new Set<MessageKey>(['language.switchTo', 'record.metaLine']);
     for (const key of keys) {
       if (allowedLatin.has(key)) continue;
       const message = dictionaries.ar[key];
@@ -61,15 +61,15 @@ describe('translator', () => {
     expect(t('discussion.count', { count: 0 })).toBe('لا توجد تعليقات');
     expect(t('discussion.count', { count: 1 })).toBe('تعليق واحد');
     expect(t('discussion.count', { count: 2 })).toBe('تعليقان');
-    expect(t('discussion.count', { count: 5 })).toBe('5 تعليقات');
-    expect(t('discussion.count', { count: 12 })).toBe('12 تعليقًا');
-    expect(t('discussion.count', { count: 100 })).toBe('100 تعليق');
+    expect(t('discussion.count', { count: 5 })).toBe('٥ تعليقات');
+    expect(t('discussion.count', { count: 12 })).toBe('١٢ تعليقًا');
+    expect(t('discussion.count', { count: 100 })).toBe('١٠٠ تعليق');
     expect(t('reply.label', { name: 'Omar Saleh' })).toBe('الرد على Omar Saleh');
   });
 
-  it('formats numbers with grouping and Western digits', () => {
+  it('formats numbers with grouping, Western digits in English and Arabic-Indic in Arabic', () => {
     expect(createI18n('en').t('discussion.count', { count: 1200 })).toBe('1,200 comments');
-    expect(createI18n('ar').t('discussion.count', { count: 1200 })).toMatch(/^1.200 تعليق$/);
+    expect(createI18n('ar').t('discussion.count', { count: 1200 })).toMatch(/^١.٢٠٠ تعليق$/);
   });
 
   it('leaves unknown placeholders visible instead of printing "undefined"', () => {
@@ -80,9 +80,9 @@ describe('translator', () => {
 describe('formatting (I-4)', () => {
   const iso = '2026-10-24T08:30:00Z';
 
-  it('uses the Gregorian calendar and Western digits in Arabic', () => {
-    expect(createI18n('ar').formatDate(iso)).toBe('24 أكتوبر 2026');
-    expect(createI18n('en').formatDate(iso)).toBe('24 October 2026');
+  it('uses the Gregorian calendar, short months and Arabic-Indic digits in Arabic (as in the design)', () => {
+    expect(createI18n('ar').formatDate(iso)).toBe('٢٤ أكتوبر ٢٠٢٦');
+    expect(createI18n('en').formatDate(iso)).toBe('24 Oct 2026');
   });
 
   it('produces identical dates through Intl and the manual fallback (engine parity)', () => {
@@ -97,14 +97,15 @@ describe('formatting (I-4)', () => {
   it('shows dates in Saudi time on every engine, so server and client agree', () => {
     const lateEvening = '2026-10-24T22:30:00Z'; // 01:30 on 25 October in Riyadh
     for (const options of [{}, { forceFallback: true }]) {
-      expect(createFormatters('en', options).formatDate(lateEvening)).toBe('25 October 2026');
-      expect(createFormatters('en', options).formatDateTime(lateEvening)).toBe('25 October 2026, 01:30');
+      expect(createFormatters('en', options).formatDate(lateEvening)).toBe('25 Oct 2026');
+      expect(createFormatters('en', options).formatDateTime(lateEvening)).toBe('25 Oct 2026, 01:30');
+      expect(createFormatters('ar', options).formatDateTime(lateEvening)).toBe('٢٥ أكتوبر ٢٠٢٦، ٠١:٣٠');
     }
   });
 
   it('formats date-time with a locale-appropriate separator', () => {
-    expect(createI18n('en').formatDateTime(iso)).toMatch(/^24 October 2026, \d{2}:\d{2}$/);
-    expect(createI18n('ar').formatDateTime(iso)).toMatch(/^24 أكتوبر 2026، \d{2}:\d{2}$/);
+    expect(createI18n('en').formatDateTime(iso)).toBe('24 Oct 2026, 11:30');
+    expect(createI18n('ar').formatDateTime(iso)).toBe('٢٤ أكتوبر ٢٠٢٦، ١١:٣٠');
   });
 
   it('formats relative time with plural rules and falls back to a date after a week', () => {
@@ -113,12 +114,13 @@ describe('formatting (I-4)', () => {
     const en = createI18n('en');
     const ar = createI18n('ar');
     expect(en.formatRelativeTime(ago(10_000), now)).toBe('just now');
-    expect(en.formatRelativeTime(ago(60_000), now)).toBe('1 minute ago');
-    expect(en.formatRelativeTime(ago(5 * 3_600_000), now)).toBe('5 hours ago');
-    expect(ar.formatRelativeTime(ago(2 * 86_400_000), now)).toBe('منذ يومين');
-    expect(ar.formatRelativeTime(ago(3 * 60_000), now)).toBe('منذ 3 دقائق');
-    expect(ar.formatRelativeTime(ago(11 * 60_000), now)).toBe('منذ 11 دقيقة');
-    expect(en.formatRelativeTime('2026-10-01T12:00:00Z', now)).toBe('1 October 2026');
+    expect(en.formatRelativeTime(ago(60_000), now)).toBe('1 min ago');
+    expect(en.formatRelativeTime(ago(12 * 60_000), now)).toBe('12 min ago');
+    expect(en.formatRelativeTime(ago(5 * 3_600_000), now)).toBe('5 hr ago');
+    expect(ar.formatRelativeTime(ago(2 * 86_400_000), now)).toBe('قبل يومين');
+    expect(ar.formatRelativeTime(ago(8 * 60_000), now)).toBe('قبل ٨ دقائق');
+    expect(ar.formatRelativeTime(ago(12 * 60_000), now)).toBe('قبل ١٢ دقيقة');
+    expect(en.formatRelativeTime('2026-10-01T12:00:00Z', now)).toBe('1 Oct 2026');
     // clock skew: a timestamp slightly in the future is "just now", not "-1 minutes ago"
     expect(en.formatRelativeTime(new Date(now + 90_000).toISOString(), now)).toBe('just now');
   });

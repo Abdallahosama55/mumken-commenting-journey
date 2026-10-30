@@ -4,18 +4,18 @@ import styles from './RecordArticle.module.css';
 
 /**
  * The published record (J-1). A Server Component: static HTML, no client JavaScript, and the page's LCP
- * element. `source` exists only in English in the dataset, so it is isolated with its own `lang`/`dir` (I-3).
+ * element. Layout per the Figma web frame: reference + status badge, title, summary, source · date.
+ * `id` and `source` exist only in Latin script in the dataset, so they are bidi-isolated (I-3).
  */
 export function RecordArticle({ record, i18n }: { record: PublishedRecord; i18n: I18n }) {
   const { locale, t } = i18n;
+  // First-strong isolates keep the Latin-only source from reordering the Arabic sentence around it (I-3).
+  const source = `\u2068${record.source}\u2069`;
   return (
     <article className={`card ${styles.record}`} aria-labelledby="record-title">
       <div className={styles.topline}>
-        <p className={styles.source}>
-          <span className="visually-hidden">{t('record.source')}: </span>
-          <bdi lang="en" dir="ltr">
-            {record.source}
-          </bdi>
+        <p className={styles.reference}>
+          <bdi>{record.id}</bdi>
         </p>
         <p className={styles.badge}>
           <span className={styles.dot} aria-hidden="true" />
@@ -26,8 +26,10 @@ export function RecordArticle({ record, i18n }: { record: PublishedRecord; i18n:
         {record.title[locale]}
       </h1>
       <p className={styles.summary}>{record.summary[locale]}</p>
-      <p className={styles.dateline}>
-        <time dateTime={record.publishedAt}>{t('record.publishedOn', { date: i18n.formatDate(record.publishedAt) })}</time>
+      <p className={styles.meta}>
+        <time dateTime={record.publishedAt}>
+          {t('record.sourceLine', { source, date: i18n.formatDate(record.publishedAt) })}
+        </time>
       </p>
     </article>
   );

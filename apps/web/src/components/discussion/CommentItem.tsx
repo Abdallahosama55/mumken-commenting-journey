@@ -15,6 +15,9 @@ interface CommentItemProps {
   readonly children?: ReactNode;
 }
 
+/** The avatar shows the first letter of the name, as in the design ("O", "ع"). */
+export const avatarLetter = (name: string) => (Array.from(name.trim())[0] ?? '?').toLocaleUpperCase();
+
 export function CommentItem({ comment, nested = false, fresh = false, focusOnMount = false, children }: CommentItemProps) {
   const { t } = useI18n();
   const { repository } = useCommenting();
@@ -38,12 +41,12 @@ export function CommentItem({ comment, nested = false, fresh = false, focusOnMou
     >
       <div className={styles.meta}>
         <span className={styles.avatar} aria-hidden="true">
-          {comment.author.initials}
+          {avatarLetter(comment.author.name)}
         </span>
         <div className={styles.metaText}>
           <p id={authorId} className={styles.author}>
             <bdi>{comment.author.name}</bdi>
-            {isOwn ? <span className={styles.you}>{t('comment.you')}</span> : null}
+            {isOwn ? <span className="visually-hidden"> ({t('comment.you')})</span> : null}
           </p>
           <p className={styles.time}>
             <RelativeTime iso={comment.createdAt} />

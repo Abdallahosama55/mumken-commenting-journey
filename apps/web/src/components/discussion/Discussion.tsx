@@ -10,6 +10,11 @@ import { DiscussionSkeleton } from './DiscussionSkeleton';
 import styles from './Discussion.module.css';
 import { Thread } from './Thread';
 
+interface OpenReply {
+  readonly threadId: string;
+  readonly to: string;
+}
+
 /**
  * The client island of the record page. States, in order of precedence:
  * data (empty S-3 or threads J-1) → load failure S-4 → loading S-1.
@@ -20,15 +25,15 @@ export function Discussion({ recordId }: { recordId: string }) {
   const announce = useAnnounce();
   const { data, isError, isFetching, refetch } = useDiscussion(recordId);
   const composerRef = useRef<HTMLTextAreaElement>(null);
-  const [openReplyId, setOpenReplyIdState] = useState<string | null>(null);
-  // Mirrors `openReplyId` for callbacks that resolve later (a reply can land after its composer was closed).
-  const openReplyRef = useRef<string | null>(null);
+  const [openReply, setOpenReplyState] = useState<OpenReply | null>(null);
+  // Mirrors `openReply` for callbacks that resolve later (a reply can land after its composer was closed).
+  const openReplyRef = useRef<OpenReply | null>(null);
   const [freshId, setFreshId] = useState<string | null>(null);
   const [focusId, setFocusId] = useState<string | null>(null);
 
-  const setOpenReplyId = (commentId: string | null) => {
-    openReplyRef.current = commentId;
-    setOpenReplyIdState(commentId);
+  const setOpenReply = (next: OpenReply | null) => {
+    openReplyRef.current = next;
+    setOpenReplyState(next);
   };
 
   const handleCommentPosted = (comment: Comment) => {
@@ -41,8 +46,8 @@ export function Discussion({ recordId }: { recordId: string }) {
     announce(t('announce.replyPosted'));
     // Only close and move focus if this reply's composer is still the open one — never steal focus from a
     // composer the user opened while the request was in flight (A-3).
-    if (openReplyRef.current === reply.parentId) {
-      setOpenReplyId(null);
+    if (openReplyRef.current?.threadId === reply.parentId) {
+      setOpenReply(null);
       setFocusId(reply.id);
     }
   };
@@ -55,7 +60,7 @@ export function Discussion({ recordId }: { recordId: string }) {
           title={t('state.empty.title')}
           body={t('state.empty.body')}
           action={
-            <button type="button" className="button button-secondary" onClick={() => composerRef.current?.focus()}>
+            <button type="button" className="button button-primary" onClick={() => composerRef.current?.focus()}>
               {t('state.empty.action')}
             </button>
           }
@@ -67,11 +72,11 @@ export function Discussion({ recordId }: { recordId: string }) {
               <Thread
                 recordId={recordId}
                 thread={thread}
-                replyOpen={openReplyId === thread.comment.id}
+                replyingTo={openReply?.threadId === thread.comment.id ? openReply.to : null}
                 freshId={freshId}
                 focusId={focusId}
-                onOpenReply={setOpenReplyId}
-                onCloseReply={() => setOpenReplyId(null)}
+                onOpenReply={(threadId, to) => setOpenReply({ threadId, to })}
+                onCloseReply={() => setOpenReply(null)}
                 onReplyPosted={handleReplyPosted}
               />
             </li>
@@ -81,10 +86,10 @@ export function Discussion({ recordId }: { recordId: string }) {
   } else if (isError) {
     content = (
       <StatePanel
-        tone="danger"
         role="alert"
         title={t('state.loadError.title')}
         body={t('state.loadError.body')}
+        tone="danger"
         action={
           <button
             type="button"
@@ -101,7 +106,7 @@ export function Discussion({ recordId }: { recordId: string }) {
       />
     );
   } else {
-    content = <DiscussionSkeleton label={t('state.loading')} />;
+    content = <DiscussionSkeleton title={t('state.loadingTitle')} label={t('state.loading')} />;
   }
 
   return (
@@ -114,9 +119,11 @@ export function Discussion({ recordId }: { recordId: string }) {
       </div>
       {/* Writing can start while comments load; it is hidden only when the discussion failed to load. */}
       {data || !isError ? (
-        <CommentComposer recordId={recordId} textareaRef={composerRef} onPosted={handleCommentPosted} />
+        <div className={styles.composer}>
+          <CommentComposer recordId={recordId} textareaRef={composerRef} onPosted={handleCommentPosted} />
+        </div>
       ) : null}
-      {content}
+      <div className={styles.content}>{content}</div>
     </section>
   );
 }

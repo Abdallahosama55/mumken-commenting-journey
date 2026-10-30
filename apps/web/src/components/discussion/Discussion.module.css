@@ -1,44 +1,46 @@
-.discussion {
-  display: grid;
-  gap: var(--space-lg);
-  margin-block-start: var(--space-lg);
-  padding: var(--space-xl);
-}
+/* Measurements from the Figma web frame; mobile-browser values follow the Expo frames. */
 
-@media (max-width: 480px) {
-  .discussion {
-    padding: var(--space-lg);
-  }
+.discussion {
+  margin-block-start: 28px;
+  padding: 29px 28px 28px;
 }
 
 .header {
   display: flex;
-  align-items: baseline;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: var(--space-md);
+  gap: 16px;
 }
 
 .title {
-  font-size: var(--font-size-lg);
+  font-size: 22px;
   font-weight: 700;
+  line-height: 32px;
 }
 
 .count {
   color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
+  font-size: 13px;
+  line-height: 18px;
+  white-space: nowrap;
+}
+
+.composer {
+  margin-block-start: 20px;
+}
+
+.content {
+  margin-block-start: 16px;
 }
 
 /* Threads ---------------------------------------------------------------- */
 
 .threads {
-  display: grid;
   border-block-start: 1px solid var(--color-border);
 }
 
 .thread {
-  display: grid;
-  gap: var(--space-md);
-  padding-block: var(--space-lg);
+  padding-block: 24px 15px;
   border-block-end: 1px solid var(--color-border);
   /* Long discussions: the browser skips layout/paint for off-screen threads. */
   content-visibility: auto;
@@ -46,38 +48,31 @@
 }
 
 .thread:last-child {
-  border-block-end: 0;
   padding-block-end: 0;
+  border-block-end: 0;
 }
 
+/* Replies: one level, a sunken card per reply, inset at the end (design: 64px). */
 .replies {
   display: grid;
-  gap: var(--space-md);
-  margin-inline-start: calc(32px + var(--space-md));
+  gap: 12px;
+  margin-block-start: 16px;
+  margin-inline-end: 64px;
 }
 
-.replies > ol {
-  display: grid;
-  gap: var(--space-sm);
-}
-
-@media (max-width: 480px) {
-  .replies {
-    margin-inline-start: var(--space-lg);
-  }
+.replyComposer {
+  margin-block-start: 16px;
 }
 
 /* Comment ---------------------------------------------------------------- */
 
 .comment {
-  display: grid;
-  gap: var(--space-sm);
   border-radius: var(--radius-md);
   scroll-margin-block: 96px;
 }
 
 .comment[data-nested] {
-  padding: var(--space-md) var(--space-lg);
+  padding: 22px 14px 12px;
   border: 1px solid var(--color-border);
   background: var(--color-surface-sunken);
 }
@@ -96,53 +91,44 @@
 .meta {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
+  gap: 10px;
 }
 
 .avatar {
   display: grid;
   flex: none;
   place-items: center;
-  inline-size: 32px;
-  block-size: 32px;
+  inline-size: 36px;
+  block-size: 36px;
   border-radius: 50%;
   background: var(--color-accent-soft);
   color: var(--color-accent-ink);
-  font-size: var(--font-size-xs);
+  font-size: 14px;
   font-weight: 700;
+  line-height: 1;
 }
 
 .metaText {
   display: grid;
   min-inline-size: 0;
-  line-height: var(--line-height-tight);
 }
 
 .author {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--space-sm);
-  font-size: var(--font-size-sm);
-  font-weight: 700;
-}
-
-.you {
-  padding: 0 6px;
-  border-radius: var(--radius-sm);
-  background: var(--color-canvas);
-  color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
 }
 
 .time {
-  margin-block-start: 2px;
   color: var(--color-text-muted);
-  font-size: var(--font-size-xs);
+  font-size: 12px;
+  line-height: 18px;
 }
 
 .body {
+  margin-block-start: 17px;
+  font-size: 14px;
+  line-height: 20px;
   overflow-wrap: anywhere;
   white-space: pre-wrap;
   text-align: start;
@@ -150,49 +136,82 @@
 
 .actions {
   display: flex;
-  gap: var(--space-sm);
+  gap: 16px;
+  margin-block-start: 10px;
 }
 
-/* Skeleton --------------------------------------------------------------- */
+/* Loading (S-1): the design's loading card --------------------------------- */
 
-.skeleton {
+.loading {
   display: grid;
-  gap: var(--space-xl);
-  padding-block: var(--space-lg);
-  border-block-start: 1px solid var(--color-border);
+  padding: 22px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface-sunken);
 }
 
-.skeletonItem {
-  display: flex;
-  gap: var(--space-md);
+.loadingTitle {
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 24px;
 }
 
-.skeletonAvatar,
-.skeletonLines > span {
+.bar,
+.block {
+  display: block;
   background: var(--color-skeleton);
   animation: pulse 1.4s ease-in-out infinite;
 }
 
-.skeletonAvatar {
-  flex: none;
-  inline-size: 32px;
-  block-size: 32px;
-  border-radius: 50%;
+.bar {
+  block-size: 14px;
+  margin-block-start: 16px;
+  border-radius: var(--radius-pill);
 }
 
-.skeletonLines {
-  display: grid;
-  flex: 1;
-  gap: var(--space-sm);
+.bar[data-short] {
+  inline-size: 81%;
 }
 
-.skeletonLines > span {
-  block-size: 12px;
-  border-radius: var(--radius-sm);
+.block {
+  inline-size: 93%;
+  block-size: 62px;
+  margin-block-start: 16px;
+  border-radius: var(--radius-md);
 }
 
 @keyframes pulse {
   50% {
-    opacity: 0.45;
+    opacity: 0.5;
+  }
+}
+
+/* Phone-width browsers: the Expo frames' spacing ------------------------- */
+
+@media (max-width: 767px) {
+  .discussion {
+    margin-block-start: 18px;
+    padding: 18px 20px;
+  }
+
+  .title {
+    font-size: 20px;
+    line-height: 28px;
+  }
+
+  .composer {
+    margin-block-start: 14px;
+  }
+
+  .thread {
+    padding-block: 20px 14px;
+  }
+
+  .replies {
+    margin-inline-end: 0;
+  }
+
+  .comment[data-nested] {
+    padding: 14px;
   }
 }

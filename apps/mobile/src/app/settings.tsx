@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppText } from '@/components/AppText';
 import { Button } from '@/components/Button';
 import { useLocaleState } from '@/lib/locale';
-import { colors, common, radius, space, touchTarget } from '@/lib/theme';
+import { colors, common, layout, radius, touchTarget } from '@/lib/theme';
 
 const LANGUAGE_NAMES: Record<Locale, string> = { en: 'English', ar: 'العربية' };
 const LATENCIES: readonly LatencyProfile[] = ['instant', 'normal', 'slow'];
@@ -19,9 +19,9 @@ export default function SettingsScreen() {
   const simulation = useSimulation();
 
   return (
-    <ScrollView style={common.screen} contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + space.xl }]}>
+    <ScrollView style={common.screen} contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 24 }]}>
       <View style={[common.card, styles.section]}>
-        <AppText variant="heading" accessibilityRole="header">
+        <AppText variant="stateTitle" accessibilityRole="header">
           {t('settings.language')}
         </AppText>
         <Segmented
@@ -33,21 +33,21 @@ export default function SettingsScreen() {
 
       {simulation ? (
         <View style={[common.card, styles.section]}>
-          <AppText variant="heading" accessibilityRole="header">
+          <AppText variant="stateTitle" accessibilityRole="header">
             {t('devtools.title')}
           </AppText>
-          <AppText variant="label" tone="muted" style={styles.regular}>
+          <AppText variant="summary" tone="muted">
             {t('devtools.description')}
           </AppText>
 
-          <AppText variant="label">{t('devtools.latency')}</AppText>
+          <AppText variant="name">{t('devtools.latency')}</AppText>
           <Segmented
             options={LATENCIES.map((value) => ({ value, label: t(`devtools.latency.${value}`) }))}
             value={simulation.settings.latency}
             onChange={(latency) => simulation.update({ latency })}
           />
 
-          <AppText variant="label">{t('devtools.failSubmissions')}</AppText>
+          <AppText variant="name">{t('devtools.failSubmissions')}</AppText>
           <Segmented
             options={FAILURE_MODES.map((value) => ({ value, label: t(`devtools.failSubmissions.${value}`) }))}
             value={simulation.settings.failSubmissions}
@@ -56,8 +56,8 @@ export default function SettingsScreen() {
 
           <View style={styles.switchRow}>
             <View style={styles.switchText}>
-              <AppText variant="label">{t('devtools.failDiscussionLoad')}</AppText>
-              <AppText variant="meta" tone="muted">
+              <AppText variant="name">{t('devtools.failDiscussionLoad')}</AppText>
+              <AppText variant="small" tone="muted">
                 {t('devtools.loadHint')}
               </AppText>
             </View>
@@ -99,7 +99,7 @@ function Segmented<T extends string>({ options, value, onChange }: SegmentedProp
             style={[styles.segment, selected && styles.segmentSelected]}
           >
             <AppText
-              variant="label"
+              variant="name"
               tone={selected ? 'onInk' : 'default'}
               contentLanguage={option.language}
               style={styles.segmentLabel}
@@ -115,9 +115,8 @@ function Segmented<T extends string>({ options, value, onChange }: SegmentedProp
 }
 
 const styles = StyleSheet.create({
-  content: { padding: space.lg, gap: space.lg },
-  section: { gap: space.md },
-  regular: { fontWeight: '400' },
+  content: { padding: layout.screenPadding, gap: layout.cardGap },
+  section: { gap: 12 },
   segmented: {
     flexDirection: 'row',
     padding: 2,
@@ -131,10 +130,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: radius.sm,
-    paddingHorizontal: space.xs,
+    paddingHorizontal: 4,
   },
   segmentSelected: { backgroundColor: colors.ink },
   segmentLabel: { textAlign: 'center' },
-  switchRow: { flexDirection: 'row', alignItems: 'center', gap: space.md },
+  switchRow: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   switchText: { flex: 1, gap: 2 },
 });

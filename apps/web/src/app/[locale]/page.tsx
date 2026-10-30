@@ -20,12 +20,8 @@ export default async function RecordsPage() {
       <ul className={styles.list}>
         {records.map((record) => (
           <li key={record.id} className={`card ${styles.item}`}>
-            <p className={styles.source}>
-              <bdi lang="en" dir="ltr">
-                {record.source}
-              </bdi>
-              <span aria-hidden="true"> · </span>
-              <time dateTime={record.publishedAt}>{i18n.formatDate(record.publishedAt)}</time>
+            <p className={styles.reference}>
+              <bdi>{record.id}</bdi>
             </p>
             <h2 className={styles.recordTitle}>
               {/* The whole card is clickable through this link's ::after; the link text stays the title. */}
@@ -34,8 +30,13 @@ export default async function RecordsPage() {
               </Link>
             </h2>
             <p className={styles.summary}>{record.summary[locale]}</p>
-            <p className={styles.cta} aria-hidden="true">
-              {t('records.open')}
+            <p className={styles.meta}>
+              <time dateTime={record.publishedAt}>
+                {t('record.sourceLine', {
+                  source: `\u2068${record.source}\u2069`,
+                  date: i18n.formatDate(record.publishedAt),
+                })}
+              </time>
             </p>
           </li>
         ))}

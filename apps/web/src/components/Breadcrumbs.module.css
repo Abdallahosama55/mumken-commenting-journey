@@ -1,31 +1,29 @@
 .breadcrumbs {
-  margin-block-end: var(--space-lg);
+  margin-block-end: 28px;
   color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
+  font-size: 13px;
+  line-height: 20px;
 }
 
 .breadcrumbs ol {
   display: flex;
-  gap: var(--space-sm);
+  gap: 6px;
 }
 
 .breadcrumbs li {
   display: flex;
   flex: none;
-  gap: var(--space-sm);
+  gap: 6px;
   min-inline-size: 0;
 }
 
 .breadcrumbs li + li::before {
   /* Alt text "" keeps the separator out of the accessibility tree. */
   content: '/' / '';
-  color: var(--color-border-strong);
 }
 
-/* The current page shrinks to one ellipsised line; the full title is the h1 right below. */
 .breadcrumbs li[aria-current='page'] {
   flex: 1;
-  color: var(--color-text);
 }
 
 .current {
@@ -36,5 +34,11 @@
 }
 
 .breadcrumbs a {
+  text-decoration: none;
+}
+
+.breadcrumbs a:hover {
+  color: var(--color-text);
+  text-decoration: underline;
   text-underline-offset: 3px;
 }

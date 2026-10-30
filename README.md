@@ -14,7 +14,11 @@ each follows its own conventions.
 | English / Arabic, LTR / RTL, mixed-direction content | ✅ `<html dir>` + logical CSS | ✅ switches at runtime, no restart |
 | Accessibility | axe-clean (WCAG 2.2 AA rules), keyboard, focus management | VoiceOver labels, announcements, 44 pt targets |
 
-**Reviewer tools** (bottom corner on web, the sliders icon in the mobile header) simulate a slow network,
+**Design fidelity:** built to the Figma reference in Cairo with the supplied brand colours. Sizes and spacing were
+measured from the frames, and the result was re-measured against them: within 1 pt on the web frame
+([how](docs/DECISIONS.md#d13--design-fidelity-measured-not-eyeballed)).
+
+**Reviewer tools** (bottom corner on web, the sliders icon on the mobile records list) simulate a slow network,
 failed posts (once or always) and a failed discussion load, so every state can be reached on demand.
 
 ---
@@ -85,9 +89,9 @@ docs/                 DECISIONS.md, TESTING.md, screenshots/
 | --- | --- | --- |
 | ![](docs/screenshots/web-mobile-en-submit-failed.png) | ![](docs/screenshots/web-mobile-en-reply.png) | ![](docs/screenshots/web-mobile-ar-empty.png) |
 
-| Mobile: discussion | Mobile: reply | Mobile: failed post | Mobile (AR, RTL) | Mobile: settings + Reviewer tools |
+| Mobile: discussion | Mobile: reply | Mobile: failed post | Mobile (AR, RTL) | Mobile: empty |
 | --- | --- | --- | --- | --- |
-| ![](docs/screenshots/mobile-en-discussion.png) | ![](docs/screenshots/mobile-en-reply.png) | ![](docs/screenshots/mobile-en-submit-failed.png) | ![](docs/screenshots/mobile-ar-discussion.png) | ![](docs/screenshots/mobile-en-settings.png) |
+| ![](docs/screenshots/mobile-en-discussion.png) | ![](docs/screenshots/mobile-en-reply.png) | ![](docs/screenshots/mobile-en-submit-failed.png) | ![](docs/screenshots/mobile-ar-discussion.png) | ![](docs/screenshots/mobile-en-empty.png) |
 
 The mobile screenshots were captured in Expo Go on an Android emulator, because the development machine has no
 Xcode (see [DECISIONS § Limitations](docs/DECISIONS.md#3-limitations-and-shortcuts)).

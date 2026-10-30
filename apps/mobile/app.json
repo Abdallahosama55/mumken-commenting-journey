@@ -25,7 +25,14 @@
     "plugins": [
       "expo-router",
       "expo-status-bar",
-      ["expo-localization", { "supportsRTL": false }]
+      [
+        "expo-localization",
+        {
+          "supportsRTL": false
+        }
+      ],
+      "expo-font",
+      "expo-splash-screen"
     ],
     "experiments": {
       "typedRoutes": true,

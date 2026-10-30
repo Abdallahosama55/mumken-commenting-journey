@@ -1,8 +1,5 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import type { ComponentProps } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, View, type PressableProps } from 'react-native';
-import { useLocaleState } from '@/lib/locale';
-import { colors, fontWeight, radius, space, touchTarget } from '@/lib/theme';
+import { colors, radius, touchTarget } from '@/lib/theme';
 import { AppText } from './AppText';
 
 type Variant = 'primary' | 'secondary' | 'link';
@@ -13,29 +10,44 @@ interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> {
   /** In flight: shows progress, ignores presses, announces "busy" (S-6). */
   readonly busy?: boolean;
   readonly busyLabel?: string;
-  readonly icon?: ComponentProps<typeof Ionicons>['name'];
-  /** Mirror the icon in RTL (back arrows, reply arrows). */
-  readonly iconDirectional?: boolean;
   readonly fullWidth?: boolean;
 }
 
+/**
+ * Buttons from the design: 44pt dark primary (radius 6), white outlined secondary, and the small grey text
+ * action ("Reply") whose hit area is enlarged with `hitSlop` rather than padding, so it keeps its place.
+ */
 export function Button({
   label,
   variant = 'primary',
   busy = false,
   busyLabel,
-  icon,
-  iconDirectional = false,
   fullWidth = false,
   disabled,
   onPress,
   accessibilityLabel,
   ...props
 }: ButtonProps) {
-  const { isRTL } = useLocaleState();
-  const foreground = variant === 'primary' ? colors.onInk : variant === 'link' ? colors.textMuted : colors.text;
   const text = busy && busyLabel ? busyLabel : label;
 
+  if (variant === 'link') {
+    return (
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel ?? text}
+        onPress={onPress}
+        hitSlop={{ top: 13, bottom: 13, left: 8, right: 8 }}
+        style={({ pressed }) => [styles.link, pressed && styles.linkPressed]}
+        {...props}
+      >
+        <AppText variant="small" tone="muted">
+          {text}
+        </AppText>
+      </Pressable>
+    );
+  }
+
+  const foreground = variant === 'primary' ? colors.onInk : colors.text;
   return (
     <Pressable
       accessibilityRole="button"
@@ -43,7 +55,6 @@ export function Button({
       accessibilityState={{ disabled: Boolean(disabled), busy }}
       disabled={disabled}
       onPress={busy ? undefined : onPress}
-      hitSlop={variant === 'link' ? 8 : undefined}
       style={({ pressed }) => [
         styles.base,
         styles[variant],
@@ -54,17 +65,8 @@ export function Button({
       {...props}
     >
       <View style={styles.content}>
-        {busy ? (
-          <ActivityIndicator size="small" color={foreground} />
-        ) : icon ? (
-          <Ionicons
-            name={icon}
-            size={18}
-            color={foreground}
-            style={iconDirectional && isRTL ? styles.mirrored : undefined}
-          />
-        ) : null}
-        <AppText variant="label" style={[styles.label, { color: foreground }]} numberOfLines={1}>
+        {busy ? <ActivityIndicator size="small" color={foreground} /> : null}
+        <AppText variant="button" style={{ color: foreground }} numberOfLines={1}>
           {text}
         </AppText>
       </View>
@@ -75,22 +77,22 @@ export function Button({
 const styles = StyleSheet.create({
   base: {
     minHeight: touchTarget,
+    minWidth: 120,
     justifyContent: 'center',
+    alignSelf: 'flex-start',
     borderRadius: radius.sm,
-    paddingHorizontal: space.lg,
+    paddingHorizontal: 21,
   },
   primary: { backgroundColor: colors.ink },
-  secondary: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderStrong },
-  link: { minHeight: 32, paddingHorizontal: space.xs, alignSelf: 'flex-start' },
+  secondary: { backgroundColor: colors.surface, borderWidth: 1, borderColor: colors.borderField },
   fullWidth: { alignSelf: 'stretch' },
   disabled: { opacity: 0.5 },
-  content: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: space.sm },
-  label: { fontWeight: fontWeight.semibold },
-  mirrored: { transform: [{ scaleX: -1 }] },
+  content: { flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 },
+  link: { alignSelf: 'flex-start' },
+  linkPressed: { opacity: 0.6 },
 });
 
 const pressedStyles = StyleSheet.create({
   primary: { backgroundColor: colors.inkPressed },
   secondary: { backgroundColor: colors.surfaceSunken },
-  link: { opacity: 0.6 },
 });

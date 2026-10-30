@@ -3,7 +3,7 @@ import { router } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { Button } from '@/components/Button';
 import { StatePanel } from '@/components/StatePanel';
-import { common, space } from '@/lib/theme';
+import { common, layout } from '@/lib/theme';
 
 /** Unknown deep links land here instead of a blank screen. */
 export default function NotFoundScreen() {
@@ -19,4 +19,4 @@ export default function NotFoundScreen() {
   );
 }
 
-const styles = StyleSheet.create({ padded: { padding: space.lg } });
+const styles = StyleSheet.create({ padded: { padding: layout.screenPadding } });

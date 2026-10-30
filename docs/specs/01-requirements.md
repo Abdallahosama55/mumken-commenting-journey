@@ -59,19 +59,27 @@
 
 ## 6. Assumptions (decisions the brief or design leaves open)
 
-1. **The Figma file was read from its rendered thumbnail.** The Figma MCP and API need edit access, which the
-   candidate account does not have. Layout, hierarchy, colours and components were taken from the published
-   preview of all five frames. Exact pixel values and tokens are approximations (`packages/core/src/theme/tokens.ts`).
+1. **The Figma file was matched by measurement.** The Figma API and MCP need edit access to the file. Instead, the
+   implementation uses the exported frames plus the brand hex codes (#1C2933, #FFF5D6, #B82424, #FFEBEB) and the
+   typeface (Cairo). Sizes, weights and spacing were measured from the frames at their 1.0713× export scale. Font
+   sizes were solved from Cairo's real glyph advances. The built pages were then re-measured against the frames
+   (see DECISIONS § Design fidelity).
 2. **Ordering:** top-level threads are newest first, because the composer sits above the list in the design, so a
    new comment appears right under where it was written. Replies within a thread are oldest first, so they read as a conversation.
 3. **Current user** is `currentUser` from the dataset (Noura Alharbi). There is no authentication, as the brief says.
 4. **Reply depth:** only top-level comments can be replied to. Replies are not repliable, so no thread is deeper than one level.
 5. **Untranslated data:** `source` and user names exist only in English. They are shown as is and isolated with
    `<bdi>`/`lang` rather than machine-translated.
-6. **Digits:** Western digits (0–9) in both languages, the common convention in Saudi digital services. It is one
-   constant to change (`NUMBERING_SYSTEM` in `packages/core/src/i18n/format.ts`).
+6. **Digits:** Arabic-Indic digits in Arabic and Western digits in English, as in the design's Arabic frame
+   ("قبل ١٢ دقيقة"). Identifiers such as record ids stay Latin. It is one map to change (`NUMBERING_SYSTEM` in
+   `packages/core/src/i18n/format.ts`).
 7. **Language detection** for new comments uses the first strong directional character, the same rule as HTML `dir="auto"`.
 8. **Edit and delete** of comments are out of scope (not in the brief). `updatedAt` is shown as “Edited”.
-9. **Time zone:** dates and times are shown in Saudi time (`Asia/Riyadh`, UTC+3). A date prerendered on a
+9. **Design placeholders mapped to the dataset.** The design's mock record shows a reference ("MR-2048") and a
+   status ("Needs review"). The dataset has neither, so the reference is the record `id` and the status is
+   "Published". The breadcrumb's "Monitoring" level is shown as text, because there is no such page. "Reply" appears
+   on every comment, as in the design; answering a reply joins the same thread, addressed to that reply's author,
+   so threads stay one level deep.
+10. **Time zone:** dates and times are shown in Saudi time (`Asia/Riyadh`, UTC+3). A date prerendered on a
    build server and a timestamp rendered on the viewer's device then always agree. Relative times
    ("5 minutes ago") do not depend on the time zone.

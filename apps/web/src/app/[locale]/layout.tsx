@@ -1,20 +1,15 @@
 import { LOCALES, colors, tokensToCss } from '@commenting/core';
 import type { Metadata, Viewport } from 'next';
-import { IBM_Plex_Sans_Arabic, Inter } from 'next/font/google';
+import { Cairo } from 'next/font/google';
 import { Providers } from '@/components/Providers';
 import { ReviewerTools } from '@/components/ReviewerTools';
 import { SiteHeader } from '@/components/SiteHeader';
 import { getServerI18n } from '@/lib/server-i18n';
 import '../globals.css';
 
-// Self-hosted at build time by next/font: no layout shift, no third-party request at runtime.
-const latin = Inter({ subsets: ['latin'], variable: '--font-latin', display: 'swap' });
-const arabic = IBM_Plex_Sans_Arabic({
-  subsets: ['arabic'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-arabic',
-  display: 'swap',
-});
+// Cairo, as in the design, for both scripts. Self-hosted at build time by next/font (variable font, metric-
+// matched fallback): no layout shift and no third-party request at runtime.
+const cairo = Cairo({ subsets: ['latin', 'arabic'], variable: '--font-cairo', display: 'swap' });
 
 const tokenStyles = tokensToCss();
 
@@ -40,7 +35,7 @@ export const viewport: Viewport = {
 export default async function RootLayout({ children }: LayoutProps<'/[locale]'>) {
   const i18n = await getServerI18n();
   return (
-    <html lang={i18n.locale} dir={i18n.dir} className={`${latin.variable} ${arabic.variable}`}>
+    <html lang={i18n.locale} dir={i18n.dir} className={cairo.variable}>
       <head>
         <style>{tokenStyles}</style>
       </head>

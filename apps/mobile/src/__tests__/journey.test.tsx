@@ -52,8 +52,8 @@ describe('mobile commenting journey', () => {
     const { router } = await renderApp('/');
     await fireEvent.press(await screen.findByRole('button', { name: 'Expanding digital services for small businesses' }));
     expect(router.getPathname()).toBe('/records/record-001');
-    expect(await screen.findByText('5 comments')).toBeOnTheScreen();
-    expect(screen.getByText(/This could make a meaningful difference/)).toBeOnTheScreen();
+    expect(await screen.findByText(/This could make a meaningful difference/)).toBeOnTheScreen();
+    expect(screen.getByRole('header', { name: 'Discussion' })).toBeOnTheScreen();
     expect(screen.getByRole('header', { name: 'Record discussion' })).toBeOnTheScreen();
   });
 
@@ -64,7 +64,6 @@ describe('mobile commenting journey', () => {
     await fireEvent.press(screen.getByRole('button', { name: 'Post comment' }));
 
     expect(await screen.findByText('Count me in for the pilot.')).toBeOnTheScreen();
-    expect(screen.getByText('6 comments')).toBeOnTheScreen();
     expect(field).toHaveProp('value', '');
     expect(announce).toHaveBeenCalledWith('Your comment was posted.');
   });
@@ -100,26 +99,26 @@ describe('mobile commenting journey', () => {
     await fireEvent.press(await screen.findByRole('button', { name: 'Reply to Omar Saleh' }));
     expect(router.getPathname()).toBe('/records/record-001/reply/comment-001');
 
-    const replyField = await screen.findByLabelText('Replying to Omar Saleh');
+    const replyField = await screen.findByLabelText('Replying to Omar');
+    expect(screen.getByText('Draft text remains available if submission fails.')).toBeOnTheScreen();
     await fireEvent.changeText(replyField, 'A short video guide would help.');
     // Leave without posting — the draft must survive.
     await fireEvent.press(screen.getByRole('button', { name: 'Back' }));
     expect(router.getPathname()).toBe('/records/record-001');
 
     await fireEvent.press(await screen.findByRole('button', { name: 'Reply to Omar Saleh' }));
-    expect(await screen.findByLabelText('Replying to Omar Saleh')).toHaveProp('value', 'A short video guide would help.');
+    expect(await screen.findByLabelText('Replying to Omar')).toHaveProp('value', 'A short video guide would help.');
 
     await fireEvent.press(screen.getByRole('button', { name: 'Post reply' }));
     await waitFor(() => expect(router.getPathname()).toBe('/records/record-001'));
     expect(await screen.findByText('A short video guide would help.')).toBeOnTheScreen();
-    expect(screen.getByText('6 comments')).toBeOnTheScreen();
     expect(announce).toHaveBeenCalledWith('Your reply was posted.');
   });
 
   it('shows the empty state for a record without comments (S-3)', async () => {
     await renderApp('/records/record-002');
     expect(await screen.findByText('No comments yet')).toBeOnTheScreen();
-    expect(screen.getByRole('button', { name: 'Write a comment' })).toBeOnTheScreen();
+    expect(screen.getByRole('button', { name: 'Add first comment' })).toBeOnTheScreen();
   });
 
   it('shows the unavailable state for an unknown record (S-2)', async () => {
@@ -136,13 +135,15 @@ describe('mobile commenting journey', () => {
 
     services.network.update({ failDiscussionLoad: false });
     await fireEvent.press(screen.getByRole('button', { name: 'Try again' }));
-    expect(await screen.findByText('5 comments')).toBeOnTheScreen();
+    expect(await screen.findByText(/This could make a meaningful difference/)).toBeOnTheScreen();
   });
 
   it('renders Arabic right-to-left, with each comment in its own direction (I-1, I-2, I-3)', async () => {
     await renderApp('/records/record-001', { locale: 'ar' });
-    expect(await screen.findByText('5 تعليقات')).toBeOnTheScreen();
+    expect(await screen.findByRole('header', { name: 'المناقشة' })).toBeOnTheScreen();
     expect(screen.getByRole('header', { name: 'مناقشة السجل' })).toBeOnTheScreen();
+    // The Latin-only reference is bidi-isolated inside the Arabic line.
+    expect(screen.getByText(/^منشور · .*record-001/)).toBeOnTheScreen();
 
     const englishBody = screen.getByText(/This could make a meaningful difference/);
     expect(StyleSheet.flatten(englishBody.props.style)).toMatchObject({ writingDirection: 'ltr', textAlign: 'end' });
@@ -152,15 +153,31 @@ describe('mobile commenting journey', () => {
   });
 
   it('switches language instantly from settings, without losing the draft (I-1)', async () => {
-    const { router } = await renderApp('/records/record-001');
+    const { router } = await renderApp('/');
+    await fireEvent.press(await screen.findByRole('button', { name: 'Expanding digital services for small businesses' }));
     await fireEvent.changeText(await screen.findByLabelText('Add a comment'), 'Unsent draft');
+    await fireEvent.press(screen.getByRole('button', { name: 'Back' }));
+
     await fireEvent.press(screen.getByRole('button', { name: 'Settings' }));
     expect(router.getPathname()).toBe('/settings');
-
     await fireEvent.press(screen.getByRole('radio', { name: 'العربية' }));
     expect(await screen.findByRole('header', { name: 'الإعدادات' })).toBeOnTheScreen();
     await fireEvent.press(screen.getByRole('button', { name: 'تم' }));
 
+    await fireEvent.press(await screen.findByRole('button', { name: 'توسيع الخدمات الرقمية للمنشآت الصغيرة' }));
     expect(await screen.findByLabelText('أضف تعليقًا')).toHaveProp('value', 'Unsent draft');
+  });
+
+  it('replies to a reply in the same thread, addressed to its author (J-3)', async () => {
+    const { router } = await renderApp('/records/record-001');
+    // [0] is Lina's own thread; [1] is her reply inside Omar's thread.
+    const replyToLina = (await screen.findAllByRole('button', { name: 'Reply to Lina Haddad' }))[1]!;
+    await fireEvent.press(replyToLina);
+    expect(router.getPathname()).toBe('/records/record-001/reply/comment-001');
+    expect(await screen.findByText(/Agreed. Clear guidance/)).toBeOnTheScreen();
+    await fireEvent.changeText(screen.getByLabelText('Replying to Lina'), 'Noted, thanks');
+    await fireEvent.press(screen.getByRole('button', { name: 'Post reply' }));
+    await waitFor(() => expect(router.getPathname()).toBe('/records/record-001'));
+    expect(await screen.findByText('Noted, thanks')).toBeOnTheScreen();
   });
 });

@@ -1,50 +1,37 @@
 .panel {
-  display: flex;
-  gap: var(--space-md);
-  padding: var(--space-xl);
-  border: 1px dashed var(--color-border);
-  border-radius: var(--radius-md);
+  padding: 22px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
   background: var(--color-surface-sunken);
 }
 
-.panel[data-tone='danger'] {
-  border-style: solid;
-  border-color: var(--color-danger-border);
-  background: var(--color-danger-soft);
-}
-
-.icon {
-  flex: none;
-  margin-block-start: 2px;
-  color: var(--color-text-muted);
-}
-
-.panel[data-tone='danger'] .icon,
-.panel[data-tone='danger'] .title {
-  color: var(--color-danger);
-}
-
-.text {
-  display: grid;
-  gap: var(--space-xs);
-  min-inline-size: 0;
-}
-
 .title {
-  font-size: var(--font-size-md);
+  color: var(--color-text);
+  font-size: 17px;
   font-weight: 700;
-  line-height: var(--line-height-tight);
-}
-
-h1.title {
-  font-size: var(--font-size-xl);
+  line-height: 24px;
 }
 
 .body {
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
+  margin-block-start: 8px;
+  color: var(--color-text);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.body[data-tone='danger'] {
+  color: var(--color-danger);
 }
 
 .action {
-  margin-block-start: var(--space-md);
+  margin-block-start: 16px;
+}
+
+.body[data-tone='danger'] + .action {
+  margin-block-start: 12px;
+}
+
+/* The empty state's call to action is wider than other buttons in the design. */
+.action :global(.button-primary) {
+  padding-inline: 34px;
 }

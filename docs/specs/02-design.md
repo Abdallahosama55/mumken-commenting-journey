@@ -79,7 +79,8 @@ Typing re-renders only the composer that owns the key, never the comment list. D
 * Plural messages carry CLDR categories. Arabic rules are implemented and unit tested explicitly
   (0, 1, 2, 3–10, 11–99, 100+). Hermes does not ship `Intl.PluralRules` / `RelativeTimeFormat` on every
   target, so the same code runs on web and mobile and the output is identical.
-* Dates use `Intl.DateTimeFormat` with `calendar: 'gregory'` and Latin digits.
+* Dates use `Intl.DateTimeFormat` with `calendar: 'gregory'`, short months, Saudi time, and the design's digits
+  (Arabic-Indic in Arabic, Western in English), with a manual fallback that produces identical output.
 * **Web direction:** the `[locale]` segment is the root layout and sets `<html lang dir>`. All CSS uses logical
   properties (`margin-inline-start`, `inset-inline-end`, `text-align: start`), so RTL needs no separate stylesheet.
   Only directional icons get `:dir(rtl)` mirroring.

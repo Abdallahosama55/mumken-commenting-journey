@@ -3,13 +3,16 @@ import type { Messages } from '../translate';
 /** Modern Standard Arabic. Plural forms follow CLDR (zero/one/two/few/many/other) — see `plural.ts`. */
 export const ar: Messages = {
   'app.name': 'ممكن',
+  'app.workspace': 'مساحة عمل البحث',
   'a11y.skipToContent': 'انتقل إلى المحتوى',
 
   'language.switchTo': 'English',
   'language.switchLabel': 'التبديل إلى اللغة الإنجليزية',
   'language.name': 'العربية',
+  'language.code': 'ع',
 
   'nav.records': 'السجلات',
+  'nav.monitoring': 'الرصد',
   'nav.breadcrumb': 'مسار التنقل',
   'nav.back': 'رجوع',
   'nav.recordDiscussion': 'مناقشة السجل',
@@ -23,6 +26,9 @@ export const ar: Messages = {
   'record.published': 'منشور',
   'record.publishedOn': 'نُشر في {date}',
   'record.source': 'المصدر',
+  'record.sourceLine': 'المصدر: {source} · {date}',
+  // Status first, as in the Arabic frame ("يحتاج إلى مراجعة · MR-2048").
+  'record.metaLine': '{status} · {reference}',
 
   'discussion.title': 'المناقشة',
   'discussion.count': {
@@ -36,8 +42,8 @@ export const ar: Messages = {
   'discussion.listLabel': 'التعليقات',
 
   'composer.label': 'أضف تعليقًا',
-  'composer.placeholder': 'شارك رأيك…',
-  'composer.hint': 'سيظهر تعليقك للجميع.',
+  'composer.placeholder': 'أضف تعليقاً...',
+  'composer.hint': 'كن واضحاً وبنّاءً.',
   'composer.shortcut': 'اضغط {shortcut} للنشر.',
   'composer.submit': 'نشر التعليق',
   'composer.submitting': 'جارٍ النشر…',
@@ -60,17 +66,19 @@ export const ar: Messages = {
   },
 
   'reply.label': 'الرد على {name}',
-  'reply.placeholder': 'اكتب ردًّا…',
+  'reply.placeholder': 'اكتب رداً...',
   'reply.submit': 'نشر الرد',
   'reply.cancel': 'إلغاء',
   'reply.replyingTo': 'ردًّا على {name}',
+  'reply.draftHint': 'يبقى نص المسودة متاحاً إذا فشل الإرسال.',
 
   'validation.empty': 'اكتب شيئًا قبل النشر.',
   'validation.too_long': 'يمكن أن يصل التعليق إلى {max} حرف كحد أقصى.',
 
   'submitError.title': 'لم يُنشر التعليق',
   'submitError.replyTitle': 'لم يُنشر الرد',
-  'submitError.body': 'تحقّق من اتصالك وحاول مرة أخرى. تم الاحتفاظ بنصّك.',
+  'submitError.draftPreserved': 'تم حفظ المسودة',
+  'submitError.body': 'تحقّق من اتصالك وحاول مرة أخرى. نصّك ما زال هنا لتعديله أو إعادة إرساله.',
   'submitError.rejected': 'تعذّر قبول هذا التعليق. عدّله وحاول مرة أخرى.',
 
   'announce.commentPosted': 'تم نشر تعليقك.',
@@ -90,12 +98,13 @@ export const ar: Messages = {
   },
 
   'state.loading': 'جارٍ تحميل النقاش…',
+  'state.loadingTitle': 'جارٍ التحميل',
   'state.loadingRecord': 'جارٍ تحميل السجل…',
   'state.empty.title': 'لا توجد تعليقات بعد',
-  'state.empty.body': 'كن أول من يشارك رأيه حول هذا السجل.',
-  'state.empty.action': 'اكتب تعليقًا',
+  'state.empty.body': 'ابدأ النقاش بإضافة تعليق.',
+  'state.empty.action': 'أضف أول تعليق',
   'state.loadError.title': 'تعذّر تحميل النقاش',
-  'state.loadError.body': 'حدث خطأ أثناء تحميل التعليقات. تحقّق من اتصالك وحاول مرة أخرى.',
+  'state.loadError.body': 'تحقّق من اتصالك وحاول مرة أخرى.',
   'state.retry': 'حاول مرة أخرى',
   'state.unavailable.title': 'السجل غير متاح',
   'state.unavailable.body': 'ربما أُزيل هذا السجل أو أن الرابط غير صحيح.',
@@ -110,25 +119,25 @@ export const ar: Messages = {
 
   'time.justNow': 'الآن',
   'time.minutes': {
-    one: 'منذ دقيقة',
-    two: 'منذ دقيقتين',
-    few: 'منذ {count} دقائق',
-    many: 'منذ {count} دقيقة',
-    other: 'منذ {count} دقيقة',
+    one: 'قبل دقيقة',
+    two: 'قبل دقيقتين',
+    few: 'قبل {count} دقائق',
+    many: 'قبل {count} دقيقة',
+    other: 'قبل {count} دقيقة',
   },
   'time.hours': {
-    one: 'منذ ساعة',
-    two: 'منذ ساعتين',
-    few: 'منذ {count} ساعات',
-    many: 'منذ {count} ساعة',
-    other: 'منذ {count} ساعة',
+    one: 'قبل ساعة',
+    two: 'قبل ساعتين',
+    few: 'قبل {count} ساعات',
+    many: 'قبل {count} ساعة',
+    other: 'قبل {count} ساعة',
   },
   'time.days': {
-    one: 'منذ يوم',
-    two: 'منذ يومين',
-    few: 'منذ {count} أيام',
-    many: 'منذ {count} يومًا',
-    other: 'منذ {count} يوم',
+    one: 'قبل يوم',
+    two: 'قبل يومين',
+    few: 'قبل {count} أيام',
+    many: 'قبل {count} يومًا',
+    other: 'قبل {count} يوم',
   },
 
   'devtools.title': 'أدوات المراجعة',

@@ -8,7 +8,7 @@ import { Button } from '@/components/Button';
 import { RecordCard } from '@/components/RecordCard';
 import { Skeleton } from '@/components/Skeleton';
 import { StatePanel } from '@/components/StatePanel';
-import { common, space } from '@/lib/theme';
+import { common, layout } from '@/lib/theme';
 
 /** Record list (J-4). */
 export default function RecordsScreen() {
@@ -31,7 +31,7 @@ export default function RecordsScreen() {
   return (
     <FlatList
       style={common.screen}
-      contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + space.xl }]}
+      contentContainerStyle={[styles.content, { paddingBottom: insets.bottom + 24 }]}
       data={records.data ?? []}
       keyExtractor={(record) => record.id}
       renderItem={renderItem}
@@ -41,7 +41,9 @@ export default function RecordsScreen() {
           <AppText variant="title" accessibilityRole="header">
             {t('records.title')}
           </AppText>
-          <AppText tone="muted">{t('records.subtitle')}</AppText>
+          <AppText variant="summary" tone="muted">
+            {t('records.subtitle')}
+          </AppText>
         </View>
       }
       ListEmptyComponent={
@@ -53,7 +55,7 @@ export default function RecordsScreen() {
             action={<Button variant="secondary" label={t('state.retry')} onPress={() => void records.refetch()} />}
           />
         ) : (
-          <Skeleton label={t('state.loadingRecord')} rows={2} />
+          <Skeleton title={t('state.loadingTitle')} label={t('state.loadingRecord')} />
         )
       }
     />
@@ -63,8 +65,8 @@ export default function RecordsScreen() {
 const Separator = () => <View style={styles.separator} />;
 
 const styles = StyleSheet.create({
-  content: { padding: space.lg },
-  intro: { gap: space.xs, marginBottom: space.xl },
-  separator: { height: space.md },
+  content: { padding: layout.screenPadding },
+  intro: { gap: 4, marginBottom: layout.cardGap },
+  separator: { height: layout.cardGap },
   pressed: { opacity: 0.85 },
 });

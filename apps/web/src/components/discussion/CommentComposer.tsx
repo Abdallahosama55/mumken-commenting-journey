@@ -1,9 +1,8 @@
 'use client';
 
 import type { Comment } from '@commenting/core';
-import { useCommentComposer, useCommenting, useI18n } from '@commenting/core/react';
+import { useCommentComposer, useI18n } from '@commenting/core/react';
 import { useEffect, useId, useRef, type FormEvent, type KeyboardEvent, type RefObject } from 'react';
-import { AlertIcon } from '../icons';
 import styles from './CommentComposer.module.css';
 
 interface CommentComposerProps {
@@ -35,7 +34,6 @@ export function CommentComposer({
   onCancel,
 }: CommentComposerProps) {
   const { t } = useI18n();
-  const { repository } = useCommenting();
   const composer = useCommentComposer({ recordId, parentId, onPosted });
   const localRef = useRef<HTMLTextAreaElement>(null);
   const fieldRef = textareaRef ?? localRef;
@@ -58,7 +56,7 @@ export function CommentComposer({
         ? t('validation.too_long', { max: composer.maxLength })
         : null;
 
-  const describedBy = [failed && ids.alert, issueMessage ? ids.error : ids.hint, composer.showCounter && ids.counter]
+  const describedBy = [failed && ids.alert, issueMessage ? ids.error : !failed && ids.hint, composer.showCounter && ids.counter]
     .filter(Boolean)
     .join(' ');
 
@@ -90,12 +88,15 @@ export function CommentComposer({
       noValidate
     >
       {failed ? (
+        // The design's "Comment wasn't posted" panel: title, "Draft preserved", message, the kept text, Retry.
         <div id={ids.alert} role="alert" className={styles.alert}>
-          <AlertIcon width={18} height={18} className={styles.alertIcon} />
-          <div>
+          <div className={styles.alertHead}>
             <p className={styles.alertTitle}>{isReply ? t('submitError.replyTitle') : t('submitError.title')}</p>
-            <p>{composer.submitError?.retryable ? t('submitError.body') : t('submitError.rejected')}</p>
+            <p className={styles.alertTag}>{t('submitError.draftPreserved')}</p>
           </div>
+          <p className={styles.alertBody}>
+            {composer.submitError?.retryable ? t('submitError.body') : t('submitError.rejected')}
+          </p>
         </div>
       ) : null}
 
@@ -110,7 +111,7 @@ export function CommentComposer({
         onChange={(event) => composer.setValue(event.target.value)}
         onKeyDown={handleKeyDown}
         placeholder={isReply ? t('reply.placeholder') : t('composer.placeholder')}
-        rows={isReply ? 2 : 3}
+        rows={3}
         // Typed text takes its own direction; while empty, inherit the UI direction so the placeholder
         // sits on the correct side (an empty `dir="auto"` resolves to LTR).
         dir={composer.value.trim() ? 'auto' : undefined}
@@ -126,9 +127,9 @@ export function CommentComposer({
             <p id={ids.error} className={styles.error}>
               {issueMessage}
             </p>
-          ) : (
+          ) : failed ? null : (
             <p id={ids.hint} className={styles.hint}>
-              {t('composer.postingAs', { name: repository.getCurrentUser().name })}
+              {t('composer.hint')}
             </p>
           )}
           {composer.showCounter ? (

@@ -82,8 +82,36 @@ only, so the Arabic layout comes from `dir="rtl"` with no RTL stylesheet.
   `useInfiniteQuery`), server-side thread assembly, and live updates (SSE or WebSocket invalidating the query).
 
 ### D12 · Testing pyramid
-204 automated tests across four layers. See [TESTING.md](TESTING.md). The highest-value suites are the
+213 automated tests across four layers. See [TESTING.md](TESTING.md). The highest-value suites are the
 composer state machine (core) and the two journey suites, which exercise the real data layer rather than mocks.
+
+### D13 · Design fidelity: measured, not eyeballed
+The Figma file is view-only for the candidate account, so the API was not available. The values were recovered
+from the exported frames instead:
+* **Scale.** The web frame (1440) and iPhone frame (393) both export at 1.0713×.
+* **Type.** Cairo's cap height is exactly 0.70 em (read from the font's OS/2 table). Sizes and weights were solved
+  from measured text widths against Cairo's glyph advances, and ink density separated 400 from 500. Result:
+  title 26/700, body 14/400, names 14/500, etc. (`apps/mobile/src/lib/theme.ts`, CSS modules).
+* **Colour.** The supplied hex codes, plus sampled neutrals (#F8FAFA page, #E2E5E8 borders, #656E77 secondary).
+* **Verification.** The built web page was screenshotted at the same 1.0713× scale and the same features were
+  measured in both images: header, breadcrumb, card edges, every text baseline in the record card and composer,
+  divider, avatar, name, time, body, Reply. All land within 1 pt. Figma places Cairo about 1 px lower in its line
+  boxes than browsers do, which is corrected with 1 px padding nudges that keep every box edge exact. Mobile was
+  compared on the Android emulator against Expo frames 02–04, and the states against frame 05.
+
+Deliberate deviations, each small:
+* The field outline (#DEE0E3) is about 1.3:1 against white, below WCAG 1.4.11's 3:1. It is kept to match the design, and the 2 px focus
+  outline carries the boundary while editing. Recommend raising it in design review.
+* The mobile settings action (language and Reviewer tools) lives on the records list only, because the designed screens have no header action.
+* The status badge reads "Published" (dataset) and keeps the design's geometry. The reference is the record id.
+* The grey sentences inside the states frame are notes for the candidate, not UI copy. The UI uses the copy the
+  frame shows to users ("Start the discussion by adding a comment.", "Check your connection and try again.").
+
+### D14 · Android paragraph direction
+React Native's Android text layout uses the native (LTR) base direction and ignores `writingDirection`, so mixed lines
+such as "منشور · record-001" came out in the wrong order (confirmed by reading the node's logical string on the
+emulator). In Arabic, `AppText` wraps Android text in an explicit RTL embedding (U+202B…U+202C). iOS honours
+`writingDirection` and is unaffected.
 
 ## 2. Assumptions
 

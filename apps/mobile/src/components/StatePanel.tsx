@@ -1,55 +1,45 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
 import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { colors, radius, space } from '@/lib/theme';
+import { colors, radius } from '@/lib/theme';
 import { AppText } from './AppText';
 
 interface StatePanelProps {
-  readonly tone?: 'neutral' | 'danger';
   readonly title: string;
-  readonly body: string;
+  readonly body?: string;
+  /** Error copy is red, as in the design's "Couldn't load discussion" card. */
+  readonly tone?: 'neutral' | 'danger';
   readonly action?: ReactNode;
+  readonly children?: ReactNode;
 }
 
-/** Empty, unavailable and error states (S-2, S-3, S-4), matching the design's state cards. */
-export function StatePanel({ tone = 'neutral', title, body, action }: StatePanelProps) {
+/** The design's state card (S-1…S-4): sunken surface, 1pt border, bold title, message, one action. */
+export function StatePanel({ title, body, tone = 'neutral', action, children }: StatePanelProps) {
   const danger = tone === 'danger';
   return (
-    <View style={[styles.panel, danger && styles.danger]} accessibilityLiveRegion={danger ? 'polite' : 'none'}>
-      <View style={styles.row} accessible accessibilityRole={danger ? 'alert' : 'summary'}>
-        <Ionicons
-          name={danger ? 'alert-circle-outline' : 'chatbubble-ellipses-outline'}
-          size={22}
-          color={danger ? colors.danger : colors.textMuted}
-        />
-        <View style={styles.text}>
-          <AppText variant="label" tone={danger ? 'danger' : 'default'} style={styles.title}>
-            {title}
-          </AppText>
-          <AppText variant="label" tone="muted" style={styles.body}>
+    <View style={styles.panel} accessibilityLiveRegion={danger ? 'polite' : 'none'}>
+      <View accessible accessibilityRole={danger ? 'alert' : 'summary'}>
+        <AppText variant="stateTitle">{title}</AppText>
+        {body ? (
+          <AppText tone={danger ? 'danger' : 'default'} style={styles.body}>
             {body}
           </AppText>
-        </View>
+        ) : null}
       </View>
-      {action ? <View style={styles.action}>{action}</View> : null}
+      {children}
+      {action ? <View style={danger ? styles.actionAfterError : styles.action}>{action}</View> : null}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   panel: {
-    padding: space.lg,
-    gap: space.md,
-    borderRadius: radius.md,
+    padding: 20,
+    borderRadius: radius.lg,
     borderWidth: 1,
-    borderStyle: 'dashed',
     borderColor: colors.border,
     backgroundColor: colors.surfaceSunken,
   },
-  danger: { borderStyle: 'solid', borderColor: colors.dangerBorder, backgroundColor: colors.dangerSoft },
-  row: { flexDirection: 'row', gap: space.md },
-  text: { flex: 1, gap: space.xs },
-  title: { fontSize: 16 },
-  body: { fontWeight: '400' },
-  action: { alignItems: 'flex-start' },
+  body: { marginTop: 8 },
+  action: { marginTop: 16 },
+  actionAfterError: { marginTop: 12 },
 });

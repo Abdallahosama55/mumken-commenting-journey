@@ -74,7 +74,7 @@ describe('<Discussion> (web)', () => {
 
     const alert = await screen.findByRole('alert');
     expect(alert).toHaveTextContent('Comment wasn’t posted');
-    expect(alert).toHaveTextContent('Your text has been kept.');
+    expect(alert).toHaveTextContent('Draft preserved');
     expect(field).toHaveValue('Please publish the timeline.');
     expect(field).toHaveAccessibleDescription(/Comment wasn’t posted/);
 
@@ -127,18 +127,18 @@ describe('<Discussion> (web)', () => {
     const replyToOmar = screen.getByRole('button', { name: 'Reply to Omar Saleh' });
 
     await user.click(replyToOmar);
-    const replyField = screen.getByRole('textbox', { name: 'Replying to Omar Saleh' });
+    const replyField = screen.getByRole('textbox', { name: 'Replying to Omar' });
     expect(replyField).toHaveFocus();
     expect(replyToOmar).toHaveAttribute('aria-expanded', 'true');
 
     await user.type(replyField, 'Half-written reply');
     await user.keyboard('{Escape}');
-    expect(screen.queryByRole('textbox', { name: 'Replying to Omar Saleh' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('textbox', { name: 'Replying to Omar' })).not.toBeInTheDocument();
     expect(replyToOmar).toHaveFocus();
 
     // The draft survived closing the composer.
     await user.click(replyToOmar);
-    const reopened = screen.getByRole('textbox', { name: 'Replying to Omar Saleh' });
+    const reopened = screen.getByRole('textbox', { name: 'Replying to Omar' });
     expect(reopened).toHaveValue('Half-written reply');
 
     await user.click(screen.getByRole('button', { name: 'Post reply' }));
@@ -146,7 +146,7 @@ describe('<Discussion> (web)', () => {
     const newReply = within(replies).getAllByRole('article').at(-1)!;
     expect(newReply).toHaveTextContent('Half-written reply');
     await waitFor(() => expect(newReply).toHaveFocus());
-    expect(screen.queryByRole('textbox', { name: 'Replying to Omar Saleh' })).not.toBeInTheDocument();
+    expect(screen.queryByRole('textbox', { name: 'Replying to Omar' })).not.toBeInTheDocument();
   });
 
   it('a reply that lands after its composer was closed does not close another open composer (A-3)', async () => {
@@ -163,8 +163,8 @@ describe('<Discussion> (web)', () => {
     await user.keyboard('Slow reply');
     await user.click(screen.getByRole('button', { name: 'Post reply' }));
     await user.click(screen.getByRole('button', { name: 'Cancel' }));
-    await user.click(screen.getByRole('button', { name: 'Reply to Lina Haddad' }));
-    const otherField = screen.getByRole('textbox', { name: 'Replying to Lina Haddad' });
+    await user.click(screen.getAllByRole('button', { name: 'Reply to Lina Haddad' })[0]!);
+    const otherField = screen.getByRole('textbox', { name: 'Replying to Lina' });
     await user.keyboard('Still typing');
 
     release();
@@ -176,7 +176,7 @@ describe('<Discussion> (web)', () => {
   it('shows the empty state and its action focuses the composer (S-3)', async () => {
     const { user } = renderDiscussion({ recordId: 'record-002' });
     expect(await screen.findByRole('heading', { name: 'No comments yet' })).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'Write a comment' }));
+    await user.click(screen.getByRole('button', { name: 'Add first comment' }));
     expect(screen.getByRole('textbox', { name: 'Add a comment' })).toHaveFocus();
   });
 
@@ -205,7 +205,7 @@ describe('<Discussion> (web)', () => {
 
   it('is fully translated in Arabic, with Arabic plural forms (I-1, I-4)', async () => {
     const { user } = renderDiscussion({ locale: 'ar', simulation: { failSubmissions: 'once' } });
-    expect(await screen.findByText('5 تعليقات')).toBeInTheDocument();
+    expect(await screen.findByText('٥ تعليقات')).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'المناقشة' })).toBeInTheDocument();
     await user.type(screen.getByRole('textbox', { name: 'أضف تعليقًا' }), 'تعليق تجريبي');
     await user.click(screen.getByRole('button', { name: 'نشر التعليق' }));
@@ -216,7 +216,7 @@ describe('<Discussion> (web)', () => {
   it('has no axe violations when loaded, failed, open for reply and empty (A-2)', async () => {
     const loaded = renderDiscussion({ simulation: { failSubmissions: 'always' } });
     await threadList();
-    await loaded.user.click(screen.getByRole('button', { name: 'Reply to Lina Haddad' }));
+    await loaded.user.click(screen.getAllByRole('button', { name: 'Reply to Lina Haddad' })[0]!);
     await loaded.user.type(screen.getByRole('textbox', { name: 'Add a comment' }), 'x');
     await loaded.user.click(screen.getByRole('button', { name: 'Post comment' }));
     await screen.findByRole('alert');
@@ -231,5 +231,28 @@ describe('<Discussion> (web)', () => {
     const failed = renderDiscussion({ simulation: { failDiscussionLoad: true } });
     await screen.findByRole('alert');
     await expectNoAxeViolations(failed.container);
+  });
+});
+
+describe('<Discussion> replies to replies (J-3)', () => {
+  it('answers a nested reply in the same thread, addressed to its author', async () => {
+    const services = createTestServices();
+    const user = userEvent.setup();
+    render(
+      <TestProviders services={services}>
+        <AnnouncerProvider>
+          <Discussion recordId="record-001" />
+        </AnnouncerProvider>
+      </TestProviders>,
+    );
+    await screen.findByRole('list', { name: 'Comments' });
+    // [0] is Lina's own thread; [1] is her reply inside Omar's thread.
+    const nestedReply = screen.getAllByRole('button', { name: 'Reply to Lina Haddad' })[1]!;
+    await user.click(nestedReply);
+    const field = screen.getByRole('textbox', { name: 'Replying to Lina' });
+    await user.type(field, 'Following up');
+    await user.click(screen.getByRole('button', { name: 'Post reply' }));
+    const thread = await screen.findByRole('list', { name: '2 replies' });
+    expect(within(thread).getAllByRole('article').at(-1)).toHaveTextContent('Following up');
   });
 });

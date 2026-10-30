@@ -35,7 +35,7 @@ test.describe('commenting journey', () => {
     await expect(page.getByText('6 comments')).toBeVisible();
 
     await page.getByRole('button', { name: 'Reply to Omar Saleh' }).click();
-    await expect(page.getByRole('textbox', { name: 'Replying to Omar Saleh' })).toBeFocused();
+    await expect(page.getByRole('textbox', { name: 'Replying to Omar' })).toBeFocused();
     await page.keyboard.type('A checklist for first-time users would help.');
     await page.getByRole('button', { name: 'Post reply' }).click();
     const replies = page.getByRole('list', { name: '2 replies' });
@@ -69,7 +69,8 @@ test.describe('commenting journey', () => {
     await expect(discussion(page)).toBeVisible();
     await page.getByRole('textbox', { name: 'Add a comment' }).fill('Unsent draft');
 
-    await page.getByRole('link', { name: 'العربية' }).click();
+    // The header shows the current language code ("EN"), as in the design; its name says what it does.
+    await page.getByRole('link', { name: 'EN · Switch language to Arabic' }).click();
     await expect(page).toHaveURL(/\/ar\/records\/record-001$/);
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
     await expect(page.getByRole('heading', { name: 'المناقشة' })).toBeVisible();

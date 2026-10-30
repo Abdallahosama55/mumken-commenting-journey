@@ -1,10 +1,11 @@
 import { directionOf, type ContentLanguage } from '@commenting/core';
-import { StyleSheet, Text, type TextProps } from 'react-native';
+import { Platform, StyleSheet, Text, type TextProps } from 'react-native';
+import type { ReactNode } from 'react';
 import { useLocaleState } from '@/lib/locale';
-import { colors, fontSize, fontWeight } from '@/lib/theme';
+import { colors, type } from '@/lib/theme';
 
-type Variant = 'title' | 'heading' | 'body' | 'label' | 'meta';
-type Tone = 'default' | 'muted' | 'danger' | 'onInk' | 'accent';
+type Variant = keyof typeof type;
+type Tone = 'default' | 'muted' | 'danger' | 'onInk';
 
 interface AppTextProps extends TextProps {
   readonly variant?: Variant;
@@ -17,7 +18,7 @@ interface AppTextProps extends TextProps {
   readonly contentLanguage?: ContentLanguage;
 }
 
-export function AppText({ variant = 'body', tone = 'default', contentLanguage, style, ...props }: AppTextProps) {
+export function AppText({ variant = 'body', tone = 'default', contentLanguage, style, children, ...props }: AppTextProps) {
   const { dir } = useLocaleState();
   const contentDir = contentLanguage ? directionOf(contentLanguage) : dir;
   return (
@@ -25,27 +26,32 @@ export function AppText({ variant = 'body', tone = 'default', contentLanguage, s
       accessibilityLanguage={contentLanguage}
       {...props}
       style={[
-        styles[variant],
+        type[variant],
         tones[tone],
         { textAlign: contentDir === dir ? 'start' : 'end', writingDirection: contentDir },
         style,
       ]}
-    />
+    >
+      {contentDir === 'rtl' ? embedRtl(children) : children}
+    </Text>
   );
 }
 
-const styles = StyleSheet.create({
-  title: { fontSize: fontSize.xl, fontWeight: fontWeight.bold, lineHeight: 28 },
-  heading: { fontSize: fontSize.lg, fontWeight: fontWeight.bold, lineHeight: 24 },
-  body: { fontSize: fontSize.md, lineHeight: 24 },
-  label: { fontSize: fontSize.sm, fontWeight: fontWeight.semibold, lineHeight: 20 },
-  meta: { fontSize: fontSize.xs, lineHeight: 16 },
-});
+/**
+ * Android lays out every paragraph with the native (LTR) base direction and ignores `writingDirection`, so
+ * a mixed line such as "منشور · record-001" would come out in LTR run order. An explicit right-to-left
+ * embedding (RLE … PDF) fixes the order without affecting iOS, which already honours `writingDirection`.
+ */
+function embedRtl(children: ReactNode): ReactNode {
+  if (Platform.OS !== 'android') return children;
+  const parts = Array.isArray(children) ? children : [children];
+  if (!parts.every((part) => typeof part === 'string' || typeof part === 'number')) return children;
+  return `\u202B${parts.join('')}\u202C`;
+}
 
 const tones = StyleSheet.create({
   default: { color: colors.text },
   muted: { color: colors.textMuted },
   danger: { color: colors.danger },
   onInk: { color: colors.onInk },
-  accent: { color: colors.accentInk },
 });

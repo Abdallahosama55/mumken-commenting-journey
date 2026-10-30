@@ -1,68 +1,79 @@
 .composer {
   display: grid;
-  gap: var(--space-sm);
 }
 
+/* Failed post (S-5): the design's red panel around the kept text. */
 .composer[data-state='failed'] {
-  padding: var(--space-lg);
-  border: 1px solid var(--color-danger-border);
-  border-radius: var(--radius-md);
+  padding: 22px;
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-lg);
   background: var(--color-danger-soft);
 }
 
-.alert {
+.alertHead {
   display: flex;
-  gap: var(--space-sm);
-  color: var(--color-text);
-  font-size: var(--font-size-sm);
-}
-
-.alertIcon {
-  flex: none;
-  margin-block-start: 2px;
-  color: var(--color-danger);
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
 }
 
 .alertTitle {
   color: var(--color-danger);
+  font-size: 17px;
   font-weight: 700;
+  line-height: 24px;
 }
 
+.alertTag {
+  flex: none;
+  color: var(--color-danger);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.alertBody {
+  margin-block: 18px 14px;
+  color: var(--color-text);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+/* "Replying to Omar" */
 .label {
+  margin-block-end: 12px;
   color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-  font-weight: 600;
+  font-size: 13px;
+  line-height: 18px;
 }
 
 .field {
   display: block;
   inline-size: 100%;
-  min-block-size: 88px;
+  min-block-size: 84px;
   max-block-size: 320px;
-  padding: var(--space-md);
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-md);
+  padding: 13px 15px 11px;
+  border: 1px solid var(--color-border-field);
+  border-radius: var(--radius-sm);
   background: var(--color-surface);
-  line-height: var(--line-height-normal);
-  resize: vertical;
-  /* Grows with its content where supported; `rows` + resize elsewhere. */
+  color: var(--color-text);
+  font-size: 14px;
+  line-height: 22px;
+  /* No resize grip (as in the design); grows with its content where `field-sizing` is supported. */
+  resize: none;
   field-sizing: content;
 }
 
-.composer[data-variant='reply'] .field {
-  min-block-size: 64px;
-}
-
 .field::placeholder {
-  color: var(--color-text-muted);
+  color: var(--color-text);
   opacity: 1;
 }
 
 .field:focus-visible {
-  border-color: var(--color-focus);
-  outline-offset: 0;
+  outline: 2px solid var(--color-focus);
+  outline-offset: -1px;
 }
 
+.composer[data-state='failed'] .field,
 .field[aria-invalid='true'] {
   border-color: var(--color-danger);
 }
@@ -76,34 +87,53 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-sm) var(--space-md);
+  gap: 8px 16px;
+  margin-block-start: 11px;
+}
+
+.composer[data-state='failed'] .footer {
+  justify-content: flex-start;
+  margin-block-start: 12px;
 }
 
 .meta {
   display: grid;
   gap: 2px;
   min-inline-size: 0;
-  font-size: var(--font-size-sm);
 }
 
 .hint,
 .counter {
   color: var(--color-text-muted);
+  font-size: 12px;
+  line-height: 18px;
 }
 
 .counter[data-over],
 .error {
   color: var(--color-danger);
+  font-size: 12px;
   font-weight: 600;
+  line-height: 18px;
 }
 
 .actions {
   display: flex;
-  gap: var(--space-sm);
+  gap: 8px;
   margin-inline-start: auto;
 }
 
-/* Small screens: actions span the full width, primary last (closest to the thumb). */
+/* Failed: Retry sits at the start, under the text, as in the design. */
+.composer[data-state='failed'] .actions {
+  flex-direction: row-reverse;
+  order: -1;
+  margin-inline-start: 0;
+}
+
+.composer[data-state='failed'] .actions :global(.button-primary) {
+  min-inline-size: 120px;
+}
+
 @media (max-width: 480px) {
   .actions {
     inline-size: 100%;
