@@ -1,5 +1,5 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { detectLanguage, directionOf, type Comment } from '@commenting/core';
+import { detectLanguage, directionOf, type Comment, type Direction } from '@commenting/core';
 import { useCommentComposer, useCommenting, useI18n } from '@commenting/core/react';
 import { useImperativeHandle, useRef, useState, type Ref } from 'react';
 import { StyleSheet, TextInput, View, type TextInputInstance } from 'react-native';
@@ -105,7 +105,7 @@ export function Composer({ recordId, parentId = null, replyTo = '', autoFocus = 
         onBlur={() => setFocused(false)}
         style={[
           styles.input,
-          { textAlign: textDir === dir ? 'left' : 'right', writingDirection: textDir },
+          { textAlign: inputAlign(textDir, dir), writingDirection: textDir },
           focused && styles.inputFocused,
           issue && styles.inputInvalid,
           submitting && styles.inputBusy,
@@ -134,6 +134,16 @@ export function Composer({ recordId, parentId = null, replyTo = '', autoFocus = 
       />
     </View>
   );
+}
+
+/**
+ * Aligns typed text to the start of its own direction, like `dir="auto"` on the web (I-3). iOS resolves
+ * start/end against the layout direction (`RCTResolveTextAlignment` in React Native 0.88), so text that runs
+ * against the UI direction needs `end`. Known gap: on the Android emulator (Expo Go) the TextInput's
+ * alignment did not follow this prop reliably, whatever value was set; see DECISIONS § Limitations.
+ */
+function inputAlign(contentDir: Direction, layoutDir: Direction): 'start' | 'end' {
+  return contentDir === layoutDir ? 'start' : 'end';
 }
 
 const styles = StyleSheet.create({

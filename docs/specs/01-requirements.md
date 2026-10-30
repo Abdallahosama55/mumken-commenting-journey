@@ -50,7 +50,7 @@
 | **P-3** | Feature parity | Web and mobile have the same capabilities (J-*, S-*, I-*). Interactions follow each platform: inline reply on web, dedicated reply screen on mobile (as in the design). |
 | **A-1** | Keyboard | The whole web journey works with the keyboard. ⌘/Ctrl + Enter posts, Esc cancels a reply, focus is always visible. |
 | **A-2** | Screen readers | Semantic landmarks and headings. Comments are articles with named authors. Success and failure are announced (live region on web, `announceForAccessibility` on mobile). Each comment carries its language (`lang` on web, `accessibilityLanguage` on iOS) so VoiceOver uses the right voice. |
-| **A-3** | Focus management | Opening a reply moves focus to its field. Cancelling returns focus to the Reply button. After a reply is posted, focus moves to the new reply. On failure, focus stays in the field. |
+| **A-3** | Focus management | Opening a reply moves focus to its field. Cancelling returns focus to the Reply button. After a reply is posted, focus moves to the new reply. On failure, focus stays where it was (in the field after ⌘/Ctrl+Enter, on Retry after a click), and the error is announced. |
 | **A-4** | Contrast and motion | Text meets WCAG 2.2 AA contrast. Loading animation stops under `prefers-reduced-motion`. |
 | **D-1** | Data layer | The supplied JSON is the starting point. Data access sits behind a repository interface, so a real HTTP API can replace the in-memory one without UI changes. |
 | **D-2** | Session persistence | Posted comments last for the app session. On web they also survive a reload within the same tab (sessionStorage). Drafts persist the same way. |
