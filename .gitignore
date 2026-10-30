@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+dist/
+coverage/
+.expo/
+expo-env.d.ts
+ios/
+android/
+*.tsbuildinfo
+.DS_Store
+.env*.local
+test-results/
+playwright-report/
+blob-report/
+npm-debug.log*

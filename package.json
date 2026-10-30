@@ -1,0 +1,11 @@
+{
+  "name": "mumken-commenting-journey",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=20.19"
+  }
+}
